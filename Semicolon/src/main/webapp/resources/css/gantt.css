@@ -1,0 +1,166 @@
+/* 간트 차트 컨테이너 스타일 */
+#gantt_here {
+    width: 100%;
+    height: 700px; /* 차트의 높이 설정 */
+    margin: 20px auto; /* 상하 여백 추가 및 가운데 정렬 */
+    border: 1px solid #ddd; /* 연한 회색 테두리 */
+    border-radius: 5px;
+    background-color: #fff; /* 흰색 배경 */
+    overflow: hidden;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); /* 은은한 그림자 */
+}
+
+/* 페이지 헤더 스타일 */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.page-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.page-header .btn-primary {
+    background-color: #007bff; /* 파란색 계열 */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.page-header .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.page-header .btn-primary i {
+    margin-right: 5px;
+}
+
+/* 모달 오버레이 스타일 */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* 모달 컨테이너 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    width: 400px; /* 적절한 너비 설정 */
+    padding: 0; /* 내부 패딩은 .modal-content에서 관리 */
+}
+
+/* 모달 내용 스타일 */
+.modal-content {
+    padding: 25px;
+}
+
+.modal h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    font-size: 1.4rem;
+    color: #333;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.modal label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.9em;
+}
+
+.modal input.form-control,
+.modal input,
+.modal textarea {
+    width: calc(100% - 12px);
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+.modal input:focus,
+.modal textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.date-range {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.date-range > div {
+    flex: 1;
+}
+
+/* 모달 하단 버튼 그룹 스타일 */
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-buttons button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: opacity 0.2s ease;
+}
+
+.modal-buttons button:hover {
+    opacity: 0.8;
+}
+
+.modal-buttons .confirm-btn {
+    background-color: #007bff; /* 파란색 계열 - "확인", "수정" 버튼 */
+    color: #fff;
+}
+
+#updateGanttBtn {
+    background-color: #28a745; /* 녹색 계열 - "수정" 버튼 (선택 사항) */
+}
+
+#deleteGanttBtn {
+    background-color: #dc3545; /* 빨간색 계열 - "삭제" 버튼 */
+    color: #fff;
+}
+
+.modal-buttons .cancel-btn {
+    background-color: #6c757d; /* 회색 계열 - "취소" 버튼 */
+    color: #fff;
+}

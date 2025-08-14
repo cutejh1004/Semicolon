@@ -1,0 +1,176 @@
+@charset "UTF-8";
+
+/* ==================================== */
+/* 1. Main Content Area (tasklist specific) */
+/* ==================================== */
+.main-content {
+    /* common.css에 기본 스타일이 정의되어 있음 */
+}
+
+/* 메인 콘텐츠 내 실제 내용 영역 */
+.content-area {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 페이지 제목 (일감) */
+.page-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* ==================================== */
+/* 2. Task Controls (Search Bar & Create Button) */
+/* ==================================== */
+.task-controls { /* 클래스명 변경 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* 검색 바 스타일 */
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 300px;
+}
+
+.search-bar .search-icon {
+    position: absolute;
+    left: 15px;
+    color: #aaa;
+    font-size: 16px;
+}
+
+.search-bar input[type="text"] {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+}
+
+.search-bar input[type="text"]::placeholder {
+    color: #bbb;
+}
+
+/* 새 일감 생성 버튼 스타일 */
+.create-task-btn { /* 클래스명 변경 */
+    background-color: #6A3CD7;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.create-task-btn .fas { /* 클래스명 변경 */
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.create-task-btn:hover { /* 클래스명 변경 */
+    background-color: #552cb0;
+}
+
+/* ==================================== */
+/* 3. Task List Table */
+/* ==================================== */
+/* 일감 목록 테이블 컨테이너 */
+.task-list-container { /* 클래스명 변경 */
+    flex-grow: 1;
+    overflow-x: auto;
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+}
+
+/* 일감 테이블 스타일 */
+.task-table { /* 클래스명 변경 */
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #333;
+    background-color: #ffffff;
+}
+
+.task-table th, .task-table td { /* 클래스명 변경 */
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.task-table th { /* 클래스명 변경 */
+    background-color: #f8f8f8;
+    font-weight: bold;
+    color: #555;
+    white-space: nowrap;
+}
+
+/* 일감 제목 링크 */
+.task-title-link { /* 클래스명 변경 */
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.task-title-link:hover { /* 클래스명 변경 */
+    color: #6A3CD7;
+    text-decoration: underline;
+}
+
+/* 담당자 아바타 (필요시 사용) */
+.user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
+}
+
+/* 상태 아이콘 */
+.status-icon {
+    font-size: 16px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* 상태값에 따른 아이콘 색상 (JSP에서 동적으로 클래스명 생성) */
+.status-icon.진행중 { color: #5cb85c; }
+.status-icon.완료 { color: #5bc0de; }
+.status-icon.검토중 { color: #f0ad4e; }
+.status-icon.대기중 { color: #d9534f; }
+
+/* 상태 배지 */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap;
+}
+
+/* 상태값에 따른 배지 배경색 (JSP에서 동적으로 클래스명 생성) */
+.status-badge.진행중-badge { background-color: #5cb85c; }
+.status-badge.완료-badge { background-color: #5bc0de; }
+.status-badge.검토중-badge { background-color: #f0ad4e; }
+.status-badge.대기중-badge { background-color: #d9534f; }
+
+/* 모달 관련 스타일은 common.css에 정의되어 있음 */

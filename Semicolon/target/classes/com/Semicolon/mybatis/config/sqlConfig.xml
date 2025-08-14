@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<typeAliases>
+		<typeAlias type="java.lang.String" alias="str"/>
+		<typeAlias type="java.lang.Integer" alias="int"/>
+		
+		<typeAlias type="com.Semicolon.pms.dto.TaskDto" alias="task"/>
+		<typeAlias type="com.Semicolon.pms.dto.IssueDto" alias="issue"/>
+		<typeAlias type="com.Semicolon.pms.dto.CalendarDto" alias="Calendar"/>
+		<typeAlias type="com.Semicolon.pms.dto.GanttDto" alias="gantt"/>
+		<typeAlias type="com.Semicolon.org.dto.CreateOrgDTO" alias="CreateOrg"/>
+		<typeAlias type="com.Semicolon.org.dto.OrgDetailDTO" alias="OrgDetail"/>
+		<typeAlias type="com.Semicolon.org.dto.MemberDTO" alias="Member"/>
+		
+	</typeAliases>
+</configuration>

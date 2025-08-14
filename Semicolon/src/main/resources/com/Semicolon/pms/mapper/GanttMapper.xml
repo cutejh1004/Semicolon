@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Semicolon.pms.dao.GanttDAO">
+
+    <insert id="insertGantt" parameterType="com.Semicolon.pms.dto.GanttDto">
+        INSERT INTO GANTT (
+            gantt_title, task_id, gantt_manager_id, gantt_start_date, gantt_end_date, gantt_reg_date, project_id
+        ) VALUES (
+            #{ganttTitle}, #{taskId}, #{ganttManagerId}, #{ganttStartDate}, #{ganttEndDate}, NOW(), #{projectId}
+        )
+        <selectKey keyProperty="ganttId" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <select id="getAllGantts" resultType="com.Semicolon.pms.dto.GanttDto">
+        SELECT
+            gantt_id AS ganttId,
+            task_id AS taskId,
+            gantt_title AS ganttTitle,
+            gantt_manager_id AS ganttManagerId,
+            gantt_start_date AS ganttStartDate,
+            gantt_end_date AS ganttEndDate,
+            gantt_reg_date AS ganttRegDate,
+            gantt_modify_date AS ganttModifyDate,
+            project_id AS projectId
+        FROM GANTT
+    </select>
+
+    <select id="getGanttById" parameterType="int" resultType="com.Semicolon.pms.dto.GanttDto">
+        SELECT
+            gantt_id AS ganttId,
+            task_id AS taskId,
+            gantt_title AS ganttTitle,
+            gantt_manager_id AS ganttManagerId,
+            gantt_start_date AS ganttStartDate,
+            gantt_end_date AS ganttEndDate,
+            gantt_reg_date AS ganttRegDate,
+            gantt_modify_date AS ganttModifyDate,
+            project_id AS projectId
+        FROM GANTT
+        WHERE gantt_id = #{ganttId}
+    </select>
+
+    <select id="getGanttsByProjectId" parameterType="int" resultType="com.Semicolon.pms.dto.GanttDto">
+        SELECT
+            gantt_id AS ganttId,
+            task_id AS taskId,
+            gantt_title AS ganttTitle,
+            gantt_manager_id AS ganttManagerId,
+            gantt_start_date AS ganttStartDate,
+            gantt_end_date AS ganttEndDate,
+            gantt_reg_date AS ganttRegDate,
+            gantt_modify_date AS ganttModifyDate,
+            project_id AS projectId
+        FROM GANTT
+        WHERE project_id = #{projectId}
+        ORDER BY gantt_start_date ASC
+    </select>
+
+    <update id="updateGantt" parameterType="com.Semicolon.pms.dto.GanttDto">
+        UPDATE GANTT
+        SET
+            gantt_title = #{ganttTitle},
+            task_id = #{taskId},
+            gantt_manager_id = #{ganttManagerId},
+            gantt_start_date = #{ganttStartDate},
+            gantt_end_date = #{ganttEndDate},
+            gantt_modify_date = NOW(),
+            project_id = #{projectId}
+        WHERE gantt_id = #{ganttId}
+    </update>
+
+    <delete id="deleteGantt" parameterType="int">
+        DELETE FROM GANTT
+        WHERE gantt_id = #{ganttId}
+    </delete>
+
+</mapper>
