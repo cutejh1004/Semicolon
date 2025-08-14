@@ -3,98 +3,98 @@
 
 <mapper namespace="com.Semicolon.pms.dao.TaskDAO">
 
-    <resultMap id="taskMap" type="com.Semicolon.pms.dto.TaskDto">
-        <id property="taskId" column="TASK_ID" />
-        <result property="projectId" column="PROJECT_ID" />
-        <result property="taskTitle" column="TASK_TITLE" />
-        <result property="taskManagerId" column="TASK_MANAGER_ID" />
-        <result property="taskStatus" column="TASK_STATUS" />
-        <result property="taskStartDate" column="TASK_START_DATE" />
-        <result property="taskEndDate" column="TASK_END_DATE" />
-        <result property="taskDescription" column="TASK_DESCRIPTION" />
-        <result property="taskRegDate" column="TASK_REG_DATE" />
-        <result property="taskUrgency" column="TASK_URGENCY" />
-        <result property="taskModifyDate" column="TASK_MODIFY_DATE" />
-    </resultMap>
+	<resultMap id="taskMap" type="com.Semicolon.pms.dto.TaskDto">
+		<id property="taskId" column="TASK_ID" />
+		<result property="projectId" column="PROJECT_ID" />
+		<result property="taskTitle" column="TASK_TITLE" />
+		<result property="taskManagerId" column="TASK_MANAGER_ID" />
+		<result property="taskStatus" column="TASK_STATUS" />
+		<result property="taskStartDate" column="TASK_START_DATE" />
+		<result property="taskEndDate" column="TASK_END_DATE" />
+		<result property="taskDescription" column="TASK_DESCRIPTION" />
+		<result property="taskRegDate" column="TASK_REG_DATE" />
+		<result property="taskUrgency" column="TASK_URGENCY" />
+		<result property="taskModifyDate" column="TASK_MODIFY_DATE" />
+	</resultMap>
 
-    <select id="getTaskList" resultMap="taskMap">
-        SELECT * FROM TASK
-        ORDER BY TASK_REG_DATE DESC
-    </select>
-    
-    <select id="getTaskListBySearch" parameterType="String" resultMap="taskMap">
-        SELECT *
-        FROM TASK
-        WHERE TASK_TITLE LIKE '%' || #{searchQuery} || '%'
-        ORDER BY TASK_REG_DATE DESC
-    </select>
+	<select id="getTaskList" resultMap="taskMap">
+		SELECT * FROM TASK
+		ORDER BY TASK_REG_DATE DESC
+	</select>
 
-    <insert id="insertNewTask" parameterType="com.Semicolon.pms.dto.TaskDto">
-        INSERT INTO TASK
-        (
-            TASK_ID,
-            PROJECT_ID,
-            TASK_TITLE,
-            TASK_MANAGER_ID,
-            TASK_STATUS,
-            TASK_START_DATE,
-            TASK_END_DATE,
-            TASK_DESCRIPTION,
-            TASK_REG_DATE,
-            TASK_URGENCY,
-            TASK_MODIFY_DATE
-        )
-        VALUES
-        (
-            'TASK-' || LPAD(TASK_SEQ.NEXTVAL, 3, '0'),
-            #{projectId},
-            #{taskTitle},
-            #{taskManagerId},
-            #{taskStatus},
-            #{taskStartDate},
-            #{taskEndDate},
-            #{taskDescription},
-            SYSDATE,
-            #{taskUrgency},
-            SYSDATE
-        )
-    </insert>
-    
-    <select id="getTaskById" parameterType="String" resultMap="taskMap">
-        SELECT 
-            TASK_ID,
-            PROJECT_ID,
-            TASK_TITLE,
-            TASK_MANAGER_ID,
-            TASK_STATUS,
-            TASK_START_DATE,
-            TASK_END_DATE,
-            TASK_DESCRIPTION,
-            TASK_REG_DATE,
-            TASK_URGENCY,
-            TASK_MODIFY_DATE
-        FROM 
-            TASK
-        WHERE 
-            TASK_ID = #{taskId}
-    </select>
+	<select id="getTaskListBySearch" parameterType="String"
+		resultMap="taskMap">
+		SELECT *
+		FROM TASK
+		WHERE TASK_TITLE LIKE '%' || #{searchQuery} || '%'
+		ORDER BY TASK_REG_DATE DESC
+	</select>
 
-    <update id="updateTask" parameterType="com.Semicolon.pms.dto.TaskDto">
-        UPDATE TASK
-        SET
-            TASK_TITLE = #{taskTitle},
-            TASK_DESCRIPTION = #{taskDescription},
-            TASK_MANAGER_ID = #{taskManagerId},
-            TASK_START_DATE = #{taskStartDate},
-            TASK_END_DATE = #{taskEndDate},
-            TASK_STATUS = #{taskStatus},
-            TASK_URGENCY = #{taskUrgency},
-            TASK_MODIFY_DATE = SYSDATE
-        WHERE TASK_ID = #{taskId}
-    </update>
+	<insert id="insertNewTask"
+		parameterType="com.Semicolon.pms.dto.TaskDto">
+		INSERT INTO TASK
+		(
+		TASK_ID,
+		PROJECT_ID,
+		TASK_TITLE,
+		TASK_MANAGER_ID,
+		TASK_STATUS,
+		TASK_START_DATE,
+		TASK_END_DATE,
+		TASK_DESCRIPTION,
+		TASK_REG_DATE,
+		TASK_URGENCY,
+		TASK_MODIFY_DATE
+		)
+		VALUES
+		(
+		'TASK-' || LPAD(TASK_SEQ.NEXTVAL, 3, '0'), #{projectId}, #{taskTitle},
+		#{taskManagerId},
+		#{taskStatus}, #{taskStartDate},
+		#{taskEndDate},
+		#{taskDescription},
+		SYSDATE,
+		#{taskUrgency}, SYSDATE
+		)
+	</insert>
 
-    <delete id="deleteTask" parameterType="String">
-        DELETE FROM TASK
-        WHERE TASK_ID = #{taskId}
-    </delete>
+	<select id="getTaskById" parameterType="String"
+		resultMap="taskMap">
+		SELECT
+		TASK_ID,
+		PROJECT_ID,
+		TASK_TITLE,
+		TASK_MANAGER_ID,
+		TASK_STATUS,
+		TASK_START_DATE,
+		TASK_END_DATE,
+		TASK_DESCRIPTION,
+		TASK_REG_DATE,
+		TASK_URGENCY,
+		TASK_MODIFY_DATE
+		FROM
+		TASK
+		WHERE
+		TASK_ID = #{taskId}
+	</select>
+
+	<update id="updateTask"
+		parameterType="com.Semicolon.pms.dto.TaskDto">
+		UPDATE TASK
+		SET
+		TASK_TITLE = #{taskTitle},
+		TASK_DESCRIPTION = #{taskDescription},
+		TASK_MANAGER_ID = #{taskManagerId},
+		TASK_START_DATE = #{taskStartDate},
+		TASK_END_DATE = #{taskEndDate},
+		TASK_STATUS = #{taskStatus},
+		TASK_URGENCY = #{taskUrgency},
+		TASK_MODIFY_DATE = SYSDATE
+		WHERE TASK_ID = #{taskId}
+	</update>
+
+	<delete id="deleteTask" parameterType="String">
+		DELETE FROM TASK
+		WHERE TASK_ID = #{taskId}
+	</delete>
 </mapper>
