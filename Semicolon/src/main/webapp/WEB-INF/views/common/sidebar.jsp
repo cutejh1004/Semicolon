@@ -4,7 +4,8 @@
 
 <div class="sidebar-container">
     <ul class="sidebar-menu">
-        <li><a href="${pageContext.request.contextPath}/main/tasklist"><i class="fas fa-tasks"></i> TASK</a></li>
+        <li><a href="${pageContext.request.contextPath}/main/tasklist">
+        <i class="fas fa-tasks"></i> TASK</a></li>
         <li>
             <a href="${pageContext.request.contextPath}/main/issuelist">
                 <i class="fas fa-bug"></i> ISSUE

@@ -1,14 +1,15 @@
+// com.Semicolon.pms.service.GanttService.java
 package com.Semicolon.pms.service;
 
-import com.Semicolon.pms.dto.GanttDto;
 import java.sql.SQLException;
 import java.util.List;
+import com.Semicolon.pms.dto.GanttDto;
 
 public interface GanttService {
-    void addGantt(GanttDto ganttDto) throws SQLException;
-    List<GanttDto> getAllGantts() throws SQLException;
-    GanttDto getGanttById(int ganttId) throws SQLException;
-    void updateGantt(GanttDto ganttDto) throws SQLException;
-    void deleteGantt(int ganttId) throws SQLException;
-    List<GanttDto> getGanttsByProjectId(int projectId) throws SQLException;
+    List<GanttDto> getGanttDataByProjectId(String projectId) throws SQLException;
+    int createNewGantt(GanttDto gantt) throws SQLException;
+    
+    // 아래 두 메소드 추가
+    int updateGanttByTask(GanttDto gantt) throws SQLException;
+    int deleteGanttByTaskId(String taskId) throws SQLException;
 }

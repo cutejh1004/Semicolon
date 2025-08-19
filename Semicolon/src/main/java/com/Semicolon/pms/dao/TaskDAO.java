@@ -12,7 +12,7 @@ public interface TaskDAO {
     List<TaskDto> getTaskListBySearch(String searchQuery) throws SQLException;
     
     // 새 일감 등록
-    void insertNewTask(TaskDto task) throws SQLException;
+    int insertNewTask(TaskDto task) throws SQLException;
     
     // 특정 일감 상세 정보 조회
     TaskDto getTaskById(String taskId) throws SQLException;

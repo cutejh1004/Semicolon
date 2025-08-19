@@ -15,6 +15,7 @@
 		<typeAlias type="com.Semicolon.org.dto.CreateOrgDTO" alias="CreateOrg"/>
 		<typeAlias type="com.Semicolon.org.dto.OrgDetailDTO" alias="OrgDetail"/>
 		<typeAlias type="com.Semicolon.org.dto.MemberDTO" alias="Member"/>
+		<typeAlias type="com.Semicolon.org.dto.ProjectOrgDTO" alias="Project"/>
 		
 	</typeAliases>
 </configuration>

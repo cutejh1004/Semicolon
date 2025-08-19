@@ -1,14 +1,15 @@
+// com.Semicolon.pms.dao.GanttDAO.java
 package com.Semicolon.pms.dao;
 
-import com.Semicolon.pms.dto.GanttDto;
 import java.sql.SQLException;
 import java.util.List;
+import com.Semicolon.pms.dto.GanttDto;
 
 public interface GanttDAO {
-    void insertGantt(GanttDto ganttDto) throws SQLException;
-    List<GanttDto> getAllGantts() throws SQLException;
-    GanttDto getGanttById(int ganttId) throws SQLException;
-    void updateGantt(GanttDto ganttDto) throws SQLException;
-    void deleteGantt(int ganttId) throws SQLException;
-    List<GanttDto> getGanttsByProjectId(int projectId) throws SQLException; // 프로젝트별 간트 가져오기
+    List<GanttDto> getGanttDataByProjectId(String projectId) throws SQLException;
+    int insertNewGantt(GanttDto gantt) throws SQLException;
+
+    int updateGanttByTask(GanttDto gantt) throws SQLException;
+
+    int deleteGanttByTaskId(String taskId) throws SQLException;
 }

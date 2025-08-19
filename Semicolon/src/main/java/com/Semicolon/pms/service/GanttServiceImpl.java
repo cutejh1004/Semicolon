@@ -1,46 +1,41 @@
+// com.Semicolon.pms.service.GanttServiceImpl.java
 package com.Semicolon.pms.service;
-
-import com.Semicolon.pms.dao.GanttDAO;
-import com.Semicolon.pms.dto.GanttDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
 
-@Service
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.Semicolon.pms.dao.GanttDAO;
+import com.Semicolon.pms.dto.GanttDto;
+
+@Service("ganttService")
 public class GanttServiceImpl implements GanttService {
 
     @Autowired
     private GanttDAO ganttDAO;
 
     @Override
-    public void addGantt(GanttDto ganttDto) throws SQLException {
-        ganttDAO.insertGantt(ganttDto);
+    public List<GanttDto> getGanttDataByProjectId(String projectId) throws SQLException {
+        return ganttDAO.getGanttDataByProjectId(projectId);
     }
 
     @Override
-    public List<GanttDto> getAllGantts() throws SQLException {
-        return ganttDAO.getAllGantts();
+    public int createNewGantt(GanttDto gantt) throws SQLException {
+        return ganttDAO.insertNewGantt(gantt);
+    }
+
+    // 아래 두 메소드 구현 추가
+    @Override
+    public int updateGanttByTask(GanttDto gantt) throws SQLException {
+        // Task ID를 기반으로 간트 정보를 업데이트하는 DAO 메소드 호출
+        return ganttDAO.updateGanttByTask(gantt); 
     }
 
     @Override
-    public GanttDto getGanttById(int ganttId) throws SQLException {
-        return ganttDAO.getGanttById(ganttId);
-    }
-
-    @Override
-    public void updateGantt(GanttDto ganttDto) throws SQLException {
-        ganttDAO.updateGantt(ganttDto);
-    }
-
-    @Override
-    public void deleteGantt(int ganttId) throws SQLException {
-        ganttDAO.deleteGantt(ganttId);
-    }
-
-    @Override
-    public List<GanttDto> getGanttsByProjectId(int projectId) throws SQLException {
-        return ganttDAO.getGanttsByProjectId(projectId);
+    public int deleteGanttByTaskId(String taskId) throws SQLException {
+        // Task ID를 기반으로 간트 정보를 삭제하는 DAO 메소드 호출
+        return ganttDAO.deleteGanttByTaskId(taskId); 
     }
 }
