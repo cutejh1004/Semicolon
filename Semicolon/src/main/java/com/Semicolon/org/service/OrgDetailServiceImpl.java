@@ -1,44 +1,27 @@
 package com.Semicolon.org.service;
-
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.Semicolon.org.dao.OrgDetailDAO;
 import com.Semicolon.org.dto.OrgDetailDTO;
-
-@Service
 public class OrgDetailServiceImpl implements OrgDetailService {
-
-    @Autowired
     private OrgDetailDAO orgDetailDAO;
-
+    public OrgDetailServiceImpl(OrgDetailDAO orgDetailDAO) { this.orgDetailDAO = orgDetailDAO; }
     @Override
-    public OrgDetailDTO getOrgDetailByOrId(String orId) {
-        return orgDetailDAO.selectOrgDetailByOrId(orId);
+    public String getOrgIdByUserId(String userId) {
+        return orgDetailDAO.selectOrgIdByUserId(userId);
     }
-
+    
     @Override
-    public List<OrgDetailDTO> getAllOrgs() {
-        return orgDetailDAO.selectAllOrgs();
+    public OrgDetailDTO getOrgById(String orId) {
+        return orgDetailDAO.selectOrgById(orId);
     }
-
     @Override
     @Transactional
-    public void createNewOrg(OrgDetailDTO orgDetailDTO) {
-        orgDetailDAO.insertNewOrg(orgDetailDTO);
+    public void modifyOrg(OrgDetailDTO org) {
+        orgDetailDAO.updateOrg(org);
     }
-
     @Override
     @Transactional
-    public int updateOrg(OrgDetailDTO orgDetailDTO) {
-        return orgDetailDAO.updateOrg(orgDetailDTO);
-    }
-
-    @Override
-    @Transactional
-    public int deleteOrg(String orId) {
-        return orgDetailDAO.deleteOrg(orId);
+    public void removeOrg(String orId) {
+        orgDetailDAO.deleteOrg(orId);
     }
 }

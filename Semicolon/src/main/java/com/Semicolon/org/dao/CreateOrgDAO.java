@@ -5,7 +5,6 @@ import java.util.Map;
 
 public interface CreateOrgDAO {
     void createOrganization(CreateOrgDTO organization);
-    void insertInvitedMember(Map<String, Object> params);
 }
 //CREATE SEQUENCE ORGANIZATION_SEQ
 //START WITH 1

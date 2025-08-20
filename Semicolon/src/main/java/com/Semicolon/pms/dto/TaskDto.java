@@ -17,7 +17,7 @@ public class TaskDto {
     private Date taskModifyDate;    // task_modify_date
 
     // 일감에 달린 댓글 목록
-    private List<ReplyDto> comments;
+    private List<TaskReplyDTO> comments;
 
     // Getters and Setters
 
@@ -109,11 +109,11 @@ public class TaskDto {
         this.taskModifyDate = taskModifyDate;
     }
 
-    public List<ReplyDto> getComments() {
+    public List<TaskReplyDTO> getComments() {
         return comments;
     }
 
-    public void setComments(List<ReplyDto> comments) {
+    public void setComments(List<TaskReplyDTO> comments) {
         this.comments = comments;
     }
 }

@@ -1,67 +1,75 @@
 package com.Semicolon.org.controller;
 
-import com.Semicolon.org.dto.ProjectOrgDTO;
-import com.Semicolon.org.service.ProjectOrgService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
-import java.util.Arrays;
+import com.Semicolon.org.service.ProjectOrgService;
+import com.Semicolon.org.dto.ProjectOrgDTO;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
-@RequestMapping("/org") // Base URL is now /org
+@RequestMapping("/org")
 public class ProjectOrgController {
-
+    
     @Autowired
     private ProjectOrgService projectOrgService;
 
-    @GetMapping("/create") // Full URL: /org/create
-    public String showCreateProjectPage() {
-        return "project/createProject";
-    }
-
-    @PostMapping("/create") // Full URL: /org/create
-    public ModelAndView createProjectOrg(
-            ProjectOrgDTO projectOrg,
-            @RequestParam(value = "memberInvite", required = false) String memberInviteStr,
-            HttpSession session
-    ) {
-        // 공개 여부 설정
-        String publicStatus = "공개".equals(projectOrg.getProjectIsPublic()) ? "Y" : "N";
-        projectOrg.setProjectIsPublic(publicStatus);
+    @GetMapping("/myproject")
+    public String myProjectList(@RequestParam(value = "search", required = false) String searchQuery, Model model) {
         
-        // 세션에서 사용자 ID 가져오기
-        String loggedInUserId = (String) session.getAttribute("userId");
-        if (loggedInUserId == null) {
-            return new ModelAndView("redirect:/login");
-        }
-        projectOrg.setMemberId(loggedInUserId);
-        projectOrg.setMemberRole("관리자");
-
-        // 초대 멤버 목록 처리
-        if (memberInviteStr != null && !memberInviteStr.isEmpty()) {
-            projectOrg.setInvitedMembers(Arrays.asList(memberInviteStr.split(",")));
-        }
-
-        projectOrgService.createProjectOrg(projectOrg);
-
-        return new ModelAndView("redirect:/org/myproject"); // 리다이렉트 URL 변경
+        List<Map<String, Object>> projectList = new ArrayList<>();
+        projectList.add(Map.of(
+            "projectId", "PJ-001",
+            "projectName", "사내 그룹웨어 시스템 개발",
+            "projectStatus", "진행 중",
+            "projectManagerId", "김철수",
+            "projectStartDate", new Date(),
+            "projectEndDate", new Date()
+        ));
+        projectList.add(Map.of(
+            "projectId", "PJ-002",
+            "projectName", "모바일 앱 UI/UX 개편",
+            "projectStatus", "완료",
+            "projectManagerId", "이영희",
+            "projectStartDate", new Date(),
+            "projectEndDate", new Date()
+        ));
+        
+        model.addAttribute("projectList", projectList);
+        model.addAttribute("searchQuery", searchQuery);
+        
+        // myproject.jsp의 경로에 맞게 수정
+        return "organization/myproject"; 
     }
 
-    @GetMapping("/myproject") // Full URL: /org/myproject
-    public ModelAndView showMyProjectsPage(HttpSession session) {
-        String loggedInUserId = (String) session.getAttribute("userId");
-        if (loggedInUserId == null) {
-            return new ModelAndView("redirect:/login");
-        }
+    @PostMapping("/project")
+    @ResponseBody
+    public ResponseEntity<?> createProject(
+            @RequestParam("projectName") String projectName,
+            @RequestParam("projectLogo") MultipartFile projectLogo,
+            @RequestParam("projectManager") String projectManager,
+            @RequestParam("projectStartDate") String projectStartDate,
+            @RequestParam("projectEndDate") String projectEndDate,
+            @RequestParam("role") String role) {
+        
+        System.out.println("New Project Received: " + projectName);
+        System.out.println("Logo file name: " + projectLogo.getOriginalFilename());
 
-        ModelAndView mav = new ModelAndView("project/myProjectList");
-        List<ProjectOrgDTO> myProjectList = projectOrgService.getProjectOrgsByMemberId(loggedInUserId);
-        mav.addObject("myProjectList", myProjectList);
-
-        return mav;
+        return ResponseEntity.ok(Map.of("message", "프로젝트가 성공적으로 등록되었습니다."));
     }
+    
+    @GetMapping("/project/{projectId}")
+    public String projectDetail(@PathVariable("projectId") String projectId, Model model) {
+        System.out.println("Viewing details for project: " + projectId);
+        return "organization/pms/task/tasklist";
+    }
+
 }

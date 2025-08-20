@@ -1,71 +1,87 @@
+// src/main/java/com/Semicolon/org/controller/OrgDetailController.java
 package com.Semicolon.org.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.Semicolon.org.service.OrgDetailService;
+import com.Semicolon.cmnt.dto.MemberVO;
 import com.Semicolon.org.dto.OrgDetailDTO;
+import com.Semicolon.org.service.OrgDetailService;
 
 @Controller
 @RequestMapping("/org")
 public class OrgDetailController {
-    
-    @Autowired
-    private OrgDetailService orgDetailService;
 
-    // 조직 상세 페이지로 이동하는 메서드
-    // URL: /org/detail?orId=ABCDEF
-    @GetMapping("/detail")
-    public String orgDetail(@RequestParam(value = "orId", required = false) String orId, Model model) {
-        
-        OrgDetailDTO org;
+	private OrgDetailService orgDetailService;
 
-        // DB에 데이터가 없을 경우 임시로 테스트 데이터를 생성
-        if (orId == null) {
-            org = new OrgDetailDTO();
-            org.setOrId("TEMP_ORG_ID");
-            org.setOrName("임시 조직명");
-            org.setOrIntroduce("테스트를 위한 임시 조직입니다.");
-        } else {
-            // DB에서 실제 데이터 조회
-            org = orgDetailService.getOrgDetailByOrId(orId);
-        }
+	public OrgDetailController(OrgDetailService orgDetailService) {
+		this.orgDetailService = orgDetailService;
+	}
 
-        if (org != null) {
-            model.addAttribute("org", org);
-        } else {
-            return "redirect:/error";
-        }
-        
-        return "organization/orgDetail";
-    }
+	@GetMapping("/detail")
+	public String orgDetail(HttpSession session, Model model) {
 
-    @PostMapping("/update")
-    public String updateOrg(OrgDetailDTO orgDetailDTO, RedirectAttributes redirectAttributes) {
-        int result = orgDetailService.updateOrg(orgDetailDTO);
-        
-        if (result > 0) {
-            redirectAttributes.addAttribute("orId", orgDetailDTO.getOrId());
-            return "redirect:/org/detail";
-        } else {
-            return "redirect:/error";
-        }
-    }
+		MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return "redirect:/login";
+		}
 
-    @PostMapping("/delete")
-    public String deleteOrg(@RequestParam("orId") String orId) {
-        int result = orgDetailService.deleteOrg(orId);
-        
-        if (result > 0) {
-            return "redirect:/org/list";
-        } else {
-            return "redirect:/error";
-        }
-    }
+		// OrgDetailService를 이용해 사용자의 조직 ID 조회
+		String orId = orgDetailService.getOrgIdByUserId(loginUser.getUser_id());
+
+		if (orId == null) {
+			return "redirect:/org/create"; // 소속된 조직이 없으면 생성 페이지로
+		}
+
+		OrgDetailDTO org = orgDetailService.getOrgById(orId);
+
+		model.addAttribute("org", org);
+
+		return "organization/orgDetail";
+	}
+
+	@PostMapping("/update")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> updateOrg(@RequestBody OrgDetailDTO org) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			orgDetailService.modifyOrg(org);
+			response.put("status", "success");
+			response.put("message", "조직 정보가 성공적으로 업데이트되었습니다.");
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "업데이트 중 오류가 발생했습니다.");
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PostMapping("/delete")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteOrg(@RequestBody Map<String, String> payload) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			String orId = payload.get("orId");
+			orgDetailService.removeOrg(orId);
+			response.put("status", "success");
+			response.put("message", "조직이 삭제되었습니다.");
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "삭제 중 오류가 발생했습니다.");
+			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

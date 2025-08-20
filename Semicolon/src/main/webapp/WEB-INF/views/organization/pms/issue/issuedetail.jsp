@@ -18,7 +18,7 @@
 	<%@ include file="/WEB-INF/views/module/header.jsp"%>
 
 	<div class="main-layout-container">
-		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+		<jsp:include page="/WEB-INF/views/commons/sidebar.jsp" />
 
 		<div class="main-content">
 			<div class="page-header">

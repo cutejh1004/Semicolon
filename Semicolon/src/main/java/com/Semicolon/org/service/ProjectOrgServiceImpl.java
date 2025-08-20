@@ -9,14 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service("projectOrgService")
+
 public class ProjectOrgServiceImpl implements ProjectOrgService {
 
-    @Autowired
+    
     private ProjectOrgDAO projectOrgDAO;
+    
+    public ProjectOrgServiceImpl(ProjectOrgDAO projectOrgDAO) {
+    	this.projectOrgDAO = projectOrgDAO;
+    }
 
-    @Override
-    @Transactional
+
     public void createProjectOrg(ProjectOrgDTO projectOrg) {
         // 1. 프로젝트 생성
         projectOrgDAO.createProjectOrg(projectOrg);

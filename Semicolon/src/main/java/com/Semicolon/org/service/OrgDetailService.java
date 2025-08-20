@@ -1,17 +1,8 @@
 package com.Semicolon.org.service;
-
 import com.Semicolon.org.dto.OrgDetailDTO;
-import java.util.List;
-
 public interface OrgDetailService {
-
-    OrgDetailDTO getOrgDetailByOrId(String orId);
-
-    List<OrgDetailDTO> getAllOrgs();
-
-    void createNewOrg(OrgDetailDTO orgDetailDTO);
-
-    int updateOrg(OrgDetailDTO orgDetailDTO);
-    
-    int deleteOrg(String orId);
+	String getOrgIdByUserId(String userId);
+    OrgDetailDTO getOrgById(String orId);
+    void modifyOrg(OrgDetailDTO org);
+    void removeOrg(String orId);
 }

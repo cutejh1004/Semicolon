@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Semicolon.project.dao.ProjectOrgDAO">
+
+    <insert id="createProjectOrg" parameterType="com.Semicolon.org.dto.ProjectOrgDTO">
+        <selectKey keyProperty="projectId" resultType="int" order="BEFORE">
+            SELECT ORGANIZATION_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO ORGANIZATION (
+            OR_ID,
+            OR_NAME,
+            OR_CREATE_DATE,
+            OR_INTRODUCE,
+            OR_IS_PUBLIC,
+            MEMBER_ID,
+            MEMBER_ROLE,
+            OR_LOGO,
+            OR_END_DATE,
+            OR_CATEGORY
+        ) VALUES (
+            #{projectId},
+            #{projectName},
+            SYSDATE,
+            #{projectIntroduce},
+            #{projectIsPublic},
+            #{memberId},
+            #{memberRole},
+            #{projectLogo},
+            #{projectEndDate},
+            #{projectCategory}
+        )
+    </insert>
+    
+    <insert id="insertInvitedMember" parameterType="map">
+        INSERT INTO ORGANIZATION_INVITATION (
+            OR_ID,
+            MEMBER_ID,
+            INVITE_STATUS
+        ) VALUES (
+            #{projectId},
+            #{memberId},
+            '초대됨'
+        )
+    </insert>
+
+    <select id="getProjectOrgsByMemberId" resultType="com.Semicolon.org.dto.ProjectOrgDTO" parameterType="String">
+        SELECT
+            OR_ID           AS projectId,
+            OR_NAME         AS projectName,
+            OR_LOGO         AS projectLogo,
+            OR_CREATE_DATE  AS projectCreateDate,
+            OR_END_DATE     AS projectEndDate
+        FROM ORGANIZATION
+        WHERE MEMBER_ID = #{memberId}
+        ORDER BY OR_ID DESC
+    </select>
+</mapper>

@@ -28,7 +28,7 @@
 	<%@ include file="/WEB-INF/views/module/header.jsp"%>
 
 	<div class="main-layout-container">
-		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+		<jsp:include page="/WEB-INF/views/commons/sidebar.jsp" />
 
 		<div class="main-content">
 			<div class="page-header">
@@ -45,23 +45,29 @@
 	</div>
 	<%@ include file="/WEB-INF/views/module/footer.jsp"%>
 
-	<div id="newCalendarModal" class="modal">
-		<div class="modal-content">
-			<h3>새 일정 생성</h3>
+	<div id="newCalendarModal" class="custom-modal">
+		<div class="custom-modal-content">
+			<h2>새 일정 생성</h2>
 			<form id="newCalendarForm">
-				<label for="new_title">일정 이름</label> <input type="text"
-					id="new_title" name="calendarTitle" required> <label
-					for="new_content">일정 설명</label>
-				<textarea id="new_content" name="calendarContent" rows="3"></textarea>
-
-				<label>기간 선택</label>
-				<div class="date-range">
-					<input type="date" id="new_start_date" name="calendarStartDate"
-						required> ~ <input type="date" id="new_end_date"
-						name="calendarEndDate" required>
+				<div class="custom-modal-form-group">
+					<label for="new_title">일정 이름</label> <input type="text"
+						id="new_title" name="calendarTitle" required>
+				</div>
+				<div class="custom-modal-form-group">
+					<label for="new_content">일정 설명</label>
+					<textarea id="new_content" name="calendarContent" rows="3"></textarea>
 				</div>
 
-				<div class="modal-buttons">
+				<div class="custom-modal-form-group">
+					<label>기간 선택</label>
+					<div class="date-range">
+						<input type="date" id="new_start_date" name="calendarStartDate"
+							required> ~ <input type="date" id="new_end_date"
+							name="calendarEndDate" required>
+					</div>
+				</div>
+
+				<div class="custom-modal-buttons">
 					<button type="submit" class="confirm-btn">확인</button>
 					<button type="button" class="cancel-btn"
 						onclick="closeModal('newCalendarModal')">취소</button>
@@ -70,24 +76,30 @@
 		</div>
 	</div>
 
-	<div id="detailCalendarModal" class="modal">
-		<div class="modal-content">
-			<h3>상세 일정</h3>
+	<div id="detailCalendarModal" class="custom-modal">
+		<div class="custom-modal-content">
+			<h2>상세 일정</h2>
 			<form id="detailCalendarForm">
-				<input type="hidden" id="detail_id" name="calendarId"> <label
-					for="detail_title">일정 이름</label> <input type="text"
-					id="detail_title" name="calendarTitle" required> <label
-					for="detail_content">일정 설명</label>
-				<textarea id="detail_content" name="calendarContent" rows="3"></textarea>
-
-				<label>기간 선택</label>
-				<div class="date-range">
-					<input type="date" id="detail_start_date" name="calendarStartDate"
-						required> ~ <input type="date" id="detail_end_date"
-						name="calendarEndDate" required>
+				<div class="custom-modal-form-group">
+					<input type="hidden" id="detail_id" name="calendarId"> <label
+						for="detail_title">일정 이름</label> <input type="text"
+						id="detail_title" name="calendarTitle" required>
+				</div>
+				<div class="custom-modal-form-group">
+					<label for="detail_content">일정 설명</label>
+					<textarea id="detail_content" name="calendarContent" rows="3"></textarea>
 				</div>
 
-				<div class="modal-buttons">
+				<div class="custom-modal-form-group">
+					<label>기간 선택</label>
+					<div class="date-range">
+						<input type="date" id="detail_start_date" name="calendarStartDate"
+							required> ~ <input type="date" id="detail_end_date"
+							name="calendarEndDate" required>
+					</div>
+				</div>
+
+				<div class="custom-modal-buttons">
 					<button type="button" class="confirm-btn" id="updateCalendarBtn">수정</button>
 					<button type="button" class="btn btn-danger" id="deleteCalendarBtn">삭제</button>
 					<button type="button" class="cancel-btn"
@@ -97,119 +109,94 @@
 		</div>
 	</div>
 
-	<div id="modalOverlay" class="modal-overlay"></div>
+	<div id="modalOverlay" class="custom-modal-overlay"></div>
 
 	<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
 
-        // 1. 사용할 색상들을 배열로 정의
-        var eventColors = ['#FAD291', '#B8E986', '#A1D9FF', '#FF9AA2', '#C7CEEA'];
+            var eventColors = ['#FAD291', '#B8E986', '#A1D9FF', '#FF9AA2', '#C7CEEA'];
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'ko',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: ''
-            },
-            
-            // 2. 이벤트 소스를 배열 대신 함수로 정의
-            events: function(fetchInfo, successCallback, failureCallback) {
-                fetch('${pageContext.request.contextPath}/main/calendar/all')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(events => {
-                    // 3. 서버에서 가져온 각 이벤트에 무작위 색상 적용
-                    const coloredEvents = events.map(event => {
-                        // 무작위로 색상 선택
-                        const randomIndex = Math.floor(Math.random() * eventColors.length);
-                        const randomColor = eventColors[randomIndex];
-                        
-                        // 이벤트 객체에 색상 속성 추가
-                        return {
-                            ...event, // 기존 이벤트 데이터 유지
-                            backgroundColor: randomColor,
-                            borderColor: randomColor // 선택 사항
-                        };
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ko',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: ''
+                },
+                
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    fetch('${pageContext.request.contextPath}/main/calendar/all')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(events => {
+                        const coloredEvents = events.map(event => {
+                            const randomIndex = Math.floor(Math.random() * eventColors.length);
+                            const randomColor = eventColors[randomIndex];
+                            
+                            return {
+                                ...event,
+                                backgroundColor: randomColor,
+                                borderColor: randomColor
+                            };
+                        });
+                        successCallback(coloredEvents);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching events:', error);
+                        failureCallback(error);
                     });
-                    successCallback(coloredEvents);
+                },
+                
+                eventClick: function(info) {
+                    fetch('${pageContext.request.contextPath}/main/calendar/' + info.event.id)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('detail_id').value = data.calendarId;
+                        document.getElementById('detail_title').value = data.calendarTitle;
+                        document.getElementById('detail_content').value = data.calendarContent;
+                        document.getElementById('detail_start_date').value = data.calendarStartDate;
+                        document.getElementById('detail_end_date').value = data.calendarEndDate;
+                        openModal('detailCalendarModal');
+                    });
+                },
+            });
+            calendar.render();
+
+            document.getElementById('newCalendarForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData.entries());
+                
+                data.projectId = "P001";
+
+                fetch('${pageContext.request.contextPath}/main/calendar', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
                 })
-                .catch(error => {
-                    console.error('Error fetching events:', error);
-                    failureCallback(error);
-                });
-            },
-            
-            // 일정 클릭 시 모달 띄우기
-            eventClick: function(info) {
-                // 서버에서 해당 일정의 상세 정보를 가져오는 로직
-                fetch('${pageContext.request.contextPath}/main/calendar/' + info.event.id)
                 .then(response => response.json())
-                .then(data => {
-                    document.getElementById('detail_id').value = data.calendarId;
-                    document.getElementById('detail_title').value = data.calendarTitle;
-                    document.getElementById('detail_content').value = data.calendarContent;
-                    document.getElementById('detail_start_date').value = data.calendarStartDate;
-                    document.getElementById('detail_end_date').value = data.calendarEndDate;
-                    openModal('detailCalendarModal');
+                .then(result => {
+                    alert(result.message);
+                    closeModal('newCalendarModal');
+                    calendar.refetchEvents();
                 });
-            },
-        });
-        calendar.render();
-
-        // 새 일정 생성 폼 제출 이벤트
-        document.getElementById('newCalendarForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
+            });
             
-            // TODO: projectId 값 설정 필요
-            data.projectId = "P001"; // 임시 projectId
+            document.getElementById('updateCalendarBtn').addEventListener('click', function() {
+                const form = document.getElementById('detailCalendarForm');
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
 
-            fetch('${pageContext.request.contextPath}/main/calendar', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                alert(result.message);
-                closeModal('newCalendarModal');
-                calendar.refetchEvents(); // 캘린더 새로고침
-            });
-        });
-        
-        // 일정 수정 버튼 클릭 이벤트
-        document.getElementById('updateCalendarBtn').addEventListener('click', function() {
-            const form = document.getElementById('detailCalendarForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            fetch('${pageContext.request.contextPath}/main/calendar/update', {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                alert(result.message);
-                closeModal('detailCalendarModal');
-                calendar.refetchEvents();
-            });
-        });
-        
-        // 일정 삭제 버튼 클릭 이벤트
-        document.getElementById('deleteCalendarBtn').addEventListener('click', function() {
-            if(confirm('정말로 이 일정을 삭제하시겠습니까?')) {
-                const calendarId = document.getElementById('detail_id').value;
-                fetch('${pageContext.request.contextPath}/main/calendar/' + calendarId, {
-                    method: 'DELETE'
+                fetch('${pageContext.request.contextPath}/main/calendar/update', {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
                 })
                 .then(response => response.json())
                 .then(result => {
@@ -217,34 +204,43 @@
                     closeModal('detailCalendarModal');
                     calendar.refetchEvents();
                 });
-            }
+            });
+            
+            document.getElementById('deleteCalendarBtn').addEventListener('click', function() {
+                if(confirm('정말로 이 일정을 삭제하시겠습니까?')) {
+                    const calendarId = document.getElementById('detail_id').value;
+                    fetch('${pageContext.request.contextPath}/main/calendar/' + calendarId, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        alert(result.message);
+                        closeModal('detailCalendarModal');
+                        calendar.refetchEvents();
+                    });
+                }
+            });
         });
-    });
-    
-    function openNewCalendarModal() {
-        document.getElementById('newCalendarModal').style.display = 'block';
-        document.getElementById('modalOverlay').style.display = 'block';
-    }
-    
-    function openModal(modalId) {
-        document.getElementById(modalId).style.display = 'block';
-        document.getElementById('modalOverlay').style.display = 'block';
-    }
+        
+        function openNewCalendarModal() {
+            document.getElementById('newCalendarModal').style.display = 'block';
+            document.getElementById('modalOverlay').style.display = 'block';
+        }
+        
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.getElementById('modalOverlay').style.display = 'block';
+        }
 
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-        document.getElementById('modalOverlay').style.display = 'none';
-    }
-    
-    document.getElementById('modalOverlay').addEventListener('click', function() {
-        closeModal('newCalendarModal');
-        closeModal('detailCalendarModal');
-    });
-</script>
-	<!-- CREATE SEQUENCE CALENDAR_SEQ
-		START WITH 1
-		INCREMENT BY 1
-		NOCACHE; sqldeveloper에서 시퀸스생성하기 필수 -->
-</body>
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+        
+        document.getElementById('modalOverlay').addEventListener('click', function() {
+            closeModal('newCalendarModal');
+            closeModal('detailCalendarModal');
+        });
+	</script>
+	</body>
 </html>
-

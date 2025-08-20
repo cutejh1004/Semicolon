@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.Semicolon.org.dao.Member1DAO">
+
+    <resultMap id="member1ResultMap" type="com.Semicolon.org.dto.Member1DTO">
+        <result column="USERID" property="userId"/>
+        <result column="ENGID" property="engId"/>
+        <result column="MAJOR" property="major"/>
+        <result column="INTRODUCE" property="introduce"/>
+        <result column="NAME" property="name"/>
+        <result column="EMAIL" property="email"/>
+        <result column="ROLE" property="memberRole"/>
+    </resultMap>
+
+    <select id="getMemberListByOrgId" parameterType="String" resultMap="member1ResultMap">
+        SELECT
+            E.ENG_ID,
+            E.USER_ID,
+            E.MAJOR,
+            E.INTRODUCE,
+            M.NAME,
+            M.EMAIL,
+            M.ROLE
+        FROM
+            ENGINEER E
+        JOIN
+            MEMBER M ON E.USER_ID = M.USER_ID
+        WHERE
+            E.OR_ID = #{orId}
+    </select>
+    
+    <update id="updateMemberRole" parameterType="map">
+        UPDATE MEMBER
+        SET
+            ROLE = #{newRole}
+        WHERE
+            USER_ID = #{userId}
+    </update>
+
+    <update id="removeMemberFromOrg" parameterType="map">
+        UPDATE MEMBER
+        SET
+            ROLE = 'EX-MEMBER'
+        WHERE
+            USER_ID = #{userId}
+    </update>
+</mapper>

@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,18 +6,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>일감 상세</title>
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/common.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/resources/css/issuedetail.css"> <%-- CSS 파일명은 재사용 --%>
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/common.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/issuedetail.css"> <%-- CSS 파일명은 재사용 --%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 	<%@ include file="/WEB-INF/views/module/header.jsp"%>
 
 	<div class="main-layout-container">
-		<jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+		<jsp:include page="/WEB-INF/views/commons/sidebar.jsp" />
 
 		<div class="main-content">
 			<div class="page-header">
@@ -88,8 +84,7 @@
 								</c:forEach>
 							</c:when>
 							<c:otherwise>
-								<div style="text-align: center; color: #888; padding: 15px;">아직
-									댓글이 없습니다.</div>
+								<div style="text-align: center; color: #888; padding: 15px;">아직 댓글이 없습니다.</div>
 							</c:otherwise>
 						</c:choose>
 					</div>
@@ -154,12 +149,27 @@
 	<script src="${pageContext.request.contextPath}/resources/js/common.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
+            // ▼▼▼▼▼ 추가된 부분 ▼▼▼▼▼
+            // 사이드바 활성화
+            const currentPath = window.location.pathname;
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu li a');
+
+            sidebarLinks.forEach(function(link) {
+                const linkPath = link.getAttribute('href');
+                if (linkPath && currentPath.includes('/main/task')) {
+                    if (linkPath.includes('task')) {
+                        link.parentElement.classList.add('active');
+                    }
+                }
+            });
+            // ▲▲▲▲▲ 추가된 부분 ▲▲▲▲▲
+
 			// 댓글 추가 기능
 			const addReplyBtn = document.getElementById('addReplyBtn');
 			if(addReplyBtn) {
 				addReplyBtn.addEventListener('click', function() {
 					const replyContent = document.getElementById('replyContentInput').value.trim();
-					const taskId = "${task.taskId}"; // 이슈 ID -> 태스크 ID
+					const taskId = "${task.taskId}";
 					const userId = "loggedInUser"; // TODO: 실제 로그인된 사용자 ID로 변경
 
 					if (!replyContent) {
@@ -168,7 +178,7 @@
 					}
 					
 					const newReplyData = {
-						bno: taskId, // 게시물 번호로 taskId 사용
+						bno: taskId,
 						userId: userId,
 						replyContent: replyContent
 					};
@@ -198,7 +208,9 @@
 		// 댓글 삭제 함수
 		function deleteReply(replyNumber) {
 			if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
-				fetch('${pageContext.request.contextPath}/main/reply/' + replyNumber, { // API URL 변경
+                // ▼▼▼▼▼ 수정된 부분 ▼▼▼▼▼
+				fetch('${pageContext.request.contextPath}/main/task/reply/' + replyNumber, { // API URL 변경
+                // ▲▲▲▲▲ 수정된 부분 ▲▲▲▲▲
 					method: 'DELETE'
 				})
 				.then(response => response.ok ? response.json() : Promise.reject('댓글 삭제 실패'))
@@ -238,8 +250,7 @@
 				taskStatus: document.getElementById('editStatusSelect').value,
 				taskUrgency: document.getElementById('editUrgencySelect').value
 			};
-
-			fetch('${pageContext.request.contextPath}/main/task', { // PUT URL 변경
+			fetch('${pageContext.request.contextPath}/main/task', {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(updatedData)
@@ -264,7 +275,7 @@
 		function confirmTaskDeletion() {
 			if (confirm("해당 일감을 삭제하시겠습니까?")) {
 				const taskId = "${task.taskId}";
-				fetch('${pageContext.request.contextPath}/main/task/' + taskId, { // DELETE URL 변경
+				fetch('${pageContext.request.contextPath}/main/task/' + taskId, {
 					method: 'DELETE'
 				})
 				.then(response => response.json())

@@ -12,7 +12,7 @@
 <body>
 	<%@ include file="/WEB-INF/views/module/header.jsp" %>
     <div class="main-layout-container">
-            <jsp:include page="/WEB-INF/views/common/orgsidebar.jsp" />
+            <jsp:include page="/WEB-INF/views/commons/orgsidebar.jsp" />
 
             <div class="main-content">
             	

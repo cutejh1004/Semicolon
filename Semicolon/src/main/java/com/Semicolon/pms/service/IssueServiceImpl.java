@@ -1,67 +1,59 @@
+// src/main/java/com/Semicolon/pms/service/IssueServiceImpl.java
 package com.Semicolon.pms.service;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.Semicolon.command.PageMaker;
 import com.Semicolon.pms.dao.IssueDAO;
-import com.Semicolon.pms.dao.ReplyDAO;
+import com.Semicolon.pms.dao.IssueReplyDAO; // ReplyDAO -> IssueReplyDAO
 import com.Semicolon.pms.dto.IssueDto;
-import com.Semicolon.pms.dto.ReplyDto;
+import com.Semicolon.pms.dto.IssueReplyDTO; // ReplyDto -> IssueReplyDTO
 
-@Service("issueService")
 public class IssueServiceImpl implements IssueService {
-	
-	@Autowired
-	private IssueDAO issueDAO;
-	
-	@Autowired // ReplyDAO 주입
-    private ReplyDAO replyDAO;
+    
+    private IssueDAO issueDAO;
+    private IssueReplyDAO issueReplyDAO; // 타입 변경
 
-	@Override
-	public List<IssueDto> getIssueList() throws SQLException {
-		return issueDAO.getIssueList();
-	}
-	
-    // 검색 기능 구현
-    @Override
-    public List<IssueDto> getIssueListBySearch(String searchQuery) throws SQLException {
-        return issueDAO.getIssueListBySearch(searchQuery);
+    public IssueServiceImpl(IssueDAO issueDAO, IssueReplyDAO issueReplyDAO) { // 생성자 변경
+        this.issueDAO = issueDAO;
+        this.issueReplyDAO = issueReplyDAO;
     }
 
-	@Override
-	public void createNewIssue(IssueDto issue) throws SQLException {
-		issueDAO.insertNewIssue(issue);
-	}
-	
-	@Override
+    @Override
+    public List<IssueDto> getIssueList(PageMaker pageMaker) throws SQLException {
+        return issueDAO.getIssueListByProjectId(pageMaker);
+    }
+    
+    @Override
+    public int getTotalCount(PageMaker pageMaker) throws SQLException {
+        return issueDAO.getTotalCountByProjectId(pageMaker);
+    }
+    
+    @Override
+    public void createNewIssue(IssueDto issue) throws SQLException {
+        issueDAO.insertNewIssue(issue);
+    }
+    
+    @Override
     public IssueDto getIssueById(String issueId) throws SQLException {
-        // 1. 이슈 정보를 먼저 가져옵니다.
         IssueDto issue = issueDAO.getIssueById(issueId);
-
-        // 2. 이슈 정보가 존재하면 해당 이슈의 댓글 목록을 가져와서 Dto에 설정합니다.
         if (issue != null) {
-            List<ReplyDto> replies = replyDAO.getRepliesByIssueId(issueId);
-            issue.setComments(replies); // IssueDto의 setComments() 메소드 사용
+            // DAO와 DTO 타입에 맞게 수정
+            List<IssueReplyDTO> replies = issueReplyDAO.selectReplyList(issueId);
+            issue.setComments(replies);
         }
-
         return issue;
     }
-	
-	// 이슈 수정 메소드 구현
+    
     @Override
     public void updateIssue(IssueDto issue) throws SQLException {
         issueDAO.updateIssue(issue);
     }
     
-    // 이슈 삭제 메소드 구현
     @Override
     public void deleteIssue(String issueId) throws SQLException {
-        // 이슈 삭제 전에 댓글을 먼저 삭제하여 외래키 제약조건 오류가 발생하지 않도록 합니다.
-        // ReplyDAO에 deleteRepliesByIssueId(issueId) 메서드가 구현되어 있다고 가정합니다.
-        replyDAO.deleteRepliesByIssueId(issueId);
+        // 이슈 삭제 전, 해당 이슈에 달린 모든 댓글을 먼저 삭제
+        issueReplyDAO.deleteRepliesByIssueId(issueId);
         issueDAO.deleteIssue(issueId);
     }
 }

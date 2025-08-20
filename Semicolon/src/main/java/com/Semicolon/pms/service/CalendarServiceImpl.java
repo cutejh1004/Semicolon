@@ -2,18 +2,16 @@ package com.Semicolon.pms.service;
 
 import com.Semicolon.pms.dao.CalendarDAO;
 import com.Semicolon.pms.dto.CalendarDto;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.sql.SQLException;
 import java.util.List;
 
-@Service
 public class CalendarServiceImpl implements CalendarService {
     
-    @Autowired
     private CalendarDAO calendarDAO;
+
+    public CalendarServiceImpl(CalendarDAO calendarDAO) {
+        this.calendarDAO = calendarDAO;
+    }
 
     @Override
     public void addCalendar(CalendarDto calendarDto) throws SQLException {
@@ -26,7 +24,7 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public CalendarDto getCalendarById(int calendarId) throws SQLException {
+    public CalendarDto getCalendarById(String calendarId) throws SQLException {
         return calendarDAO.getCalendarById(calendarId);
     }
 
@@ -36,7 +34,7 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public void deleteCalendar(int calendarId) throws SQLException {
+    public void deleteCalendar(String calendarId) throws SQLException {
         calendarDAO.deleteCalendar(calendarId);
     }
 }

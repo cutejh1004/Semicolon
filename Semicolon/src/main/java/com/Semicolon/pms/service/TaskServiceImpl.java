@@ -3,99 +3,57 @@ package com.Semicolon.pms.service;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // [추가] 트랜잭션 어노테이션 임포트
-
+import com.Semicolon.command.PageMaker;
 import com.Semicolon.pms.dao.TaskDAO;
-import com.Semicolon.pms.dao.ReplyDAO;
+import com.Semicolon.pms.dao.TaskReplyDAO; // Task에 맞는 ReplyDAO로 가정
 import com.Semicolon.pms.dto.TaskDto;
-import com.Semicolon.pms.dto.ReplyDto;
-import com.Semicolon.pms.dto.GanttDto;           // [추가] GanttDto 임포트
-import com.Semicolon.pms.service.GanttService;   // [추가] GanttService 임포트
+import com.Semicolon.pms.dto.TaskReplyDTO; // Task에 맞는 ReplyDto로 가정
 
-@Service("taskService")
 public class TaskServiceImpl implements TaskService {
 
-    @Autowired
     private TaskDAO taskDAO;
-
-    @Autowired
-    private ReplyDAO replyDAO;
-
-    @Autowired
-    private GanttService ganttService; // [추가] GanttService 의존성 주입
-
+    private TaskReplyDAO taskReplyDAO;
+    
+    public TaskServiceImpl(TaskDAO taskDAO, TaskReplyDAO taskReplyDAO) { 
+        this.taskDAO = taskDAO;
+        this.taskReplyDAO = taskReplyDAO;
+    }
+    
     @Override
-    public List<TaskDto> getTaskList() throws SQLException {
-        return taskDAO.getTaskList();
+    public List<TaskDto> getTaskList(PageMaker pageMaker) throws SQLException {
+        return taskDAO.getTaskList(pageMaker);
     }
 
     @Override
-    public List<TaskDto> getTaskListBySearch(String searchQuery) throws SQLException {
-        return taskDAO.getTaskListBySearch(searchQuery);
-    }
-
-    @Override
-    @Transactional // [수정] 일감과 간트 생성을 하나의 트랜잭션으로 처리
-    public void createNewTask(TaskDto task) throws SQLException {
-        if (task.getTaskId() == null || task.getTaskId().isEmpty()) {
-            task.setTaskId(UUID.randomUUID().toString()); // UUID 생성 및 설정
-        }
-        // 1. 일감 생성
-        taskDAO.insertNewTask(task);
-        
-        // 2. [추가] 생성된 일감 정보를 바탕으로 간트 항목 생성
-        GanttDto gantt = new GanttDto();
-        gantt.setProjectId(task.getProjectId());
-        gantt.setTaskId(task.getTaskId());
-        gantt.setGanttTitle(task.getTaskTitle());
-        gantt.setGanttManagerId(task.getTaskManagerId());
-        gantt.setGanttStartDate(task.getTaskStartDate());
-        gantt.setGanttEndDate(task.getTaskEndDate());
-
-        ganttService.createNewGantt(gantt);
+    public int getTotalCount(PageMaker pageMaker) throws SQLException {
+        return taskDAO.getTotalCountByProjectId(pageMaker);
     }
 
     @Override
     public TaskDto getTaskById(String taskId) throws SQLException {
         TaskDto task = taskDAO.getTaskById(taskId);
         if (task != null) {
-            List<ReplyDto> replies = replyDAO.getRepliesByIssueId(taskId);
+            // 일감 상세 정보를 가져올 때 댓글 목록도 함께 가져옵니다.
+            List<TaskReplyDTO> replies = taskReplyDAO.selectReplyList(taskId);
             task.setComments(replies);
         }
         return task;
     }
 
     @Override
-    @Transactional // [수정] 일감과 간트 수정을 하나의 트랜잭션으로 처리
-    public void updateTask(TaskDto task) throws SQLException {
-        // 1. 일감 정보 수정
-        taskDAO.updateTask(task);
-        
-        // 2. [추가] 관련된 간트 항목 정보도 함께 수정
-        GanttDto gantt = new GanttDto();
-        gantt.setTaskId(task.getTaskId());
-        gantt.setGanttTitle(task.getTaskTitle());
-        gantt.setGanttManagerId(task.getTaskManagerId());
-        gantt.setGanttStartDate(task.getTaskStartDate());
-        gantt.setGanttEndDate(task.getTaskEndDate());
-
-        ganttService.updateGanttByTask(gantt);
+    public void createNewTask(TaskDto task) throws SQLException {
+        taskDAO.insertNewTask(task);
     }
 
     @Override
-    @Transactional // [수정] 일감, 댓글, 간트 삭제를 하나의 트랜잭션으로 처리
+    public void updateTask(TaskDto task) throws SQLException {
+        taskDAO.updateTask(task);
+    }
+
+    @Override
     public void deleteTask(String taskId) throws SQLException {
-        // 1. 관련된 댓글 먼저 삭제
-        replyDAO.deleteRepliesByIssueId(taskId);
-        
-        // 2. [추가] 관련된 간트 항목 삭제
-        ganttService.deleteGanttByTaskId(taskId);
-        
-        // 3. 마지막으로 일감 자체를 삭제
+        // 일감을 삭제하기 전, 해당 일감에 달린 모든 댓글을 먼저 삭제합니다.
+        taskReplyDAO.deleteRepliesByTaskId(taskId); // 메서드명은 ReplyDAO의 스펙에 따라 변경될 수 있습니다.
         taskDAO.deleteTask(taskId);
     }
 }

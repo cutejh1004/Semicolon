@@ -8,28 +8,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>일감 목록</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/common.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/issuelist.css"> <%-- CSS 파일명은 재사용 --%>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/tasklist.css"> <%-- CSS 파일명은 재사용 --%>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <%@ include file="/WEB-INF/views/module/header.jsp" %>
 
     <div class="main-layout-container">
-        <jsp:include page="/WEB-INF/views/common/sidebar.jsp" />
+        <jsp:include page="/WEB-INF/views/commons/sidebar.jsp" />
 
         <div class="main-content">
             <h2 class="page-title">일감</h2>
 
             <div class="content-area">
-                <div class="issue-controls">
-                    <div class="search-bar">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" id="searchInput" placeholder="일감 검색" value="${searchQuery}">
+                <%-- ▼▼▼▼▼ 수정된 부분 ▼▼▼▼▼ --%>
+                <form id="searchForm" action="${pageContext.request.contextPath}/main/tasklist" method="GET">
+                    <input type='hidden' name="page" value="${pageMaker.page}" />
+                    <input type='hidden' name="perPageNum" value="${pageMaker.perPageNum}" />
+                    <input type='hidden' name="searchType" value="${pageMaker.searchType}" />
+                    <input type='hidden' name="keyword" value="${pageMaker.keyword}" />
+
+                    <div class="issue-controls">
+                        <div class="search-bar">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" name="keyword" id="searchInput" placeholder="일감 검색" value="${pageMaker.keyword}">
+                        </div>
+                        <button type="button" class="create-issue-btn" onclick="openCreateTaskModal()">
+                            <i class="fas fa-plus-circle"></i> 새 일감
+                        </button>
                     </div>
-                    <button class="create-issue-btn" onclick="openCreateTaskModal()">
-                        <i class="fas fa-plus-circle"></i> 새 일감
-                    </button>
-                </div>
+                </form>
+                <%-- ▲▲▲▲▲ 수정된 부분 ▲▲▲▲▲ --%>
 
                 <div class="issue-list-container">
                     <table class="issue-table">
@@ -72,13 +81,16 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <%-- 페이지네이션 모듈 포함 (pageMaker 객체가 컨트롤러로부터 전달되어야 함) --%>
+                <%@ include file="/WEB-INF/views/module/pagination.jsp" %>
             </div>
         </div>
     </div>
 
     <%-- 새 일감 생성 모달 --%>
-    <div id="createTaskModal" class="modal">
-        <div class="modal-content">
+    <div id="createTaskModal" class="custom-modal">
+        <div class="custom-modal-content">
             <h2>새 일감 생성</h2>
             <label for="newTaskTitle">일감 제목</label>
             <input type="text" id="newTaskTitle" placeholder="일감 제목을 입력하세요">
@@ -113,12 +125,12 @@
                 <option value="Minor">Minor</option>
             </select>
         </div>
-        <div class="modal-buttons">
-            <button class="confirm-btn" onclick="addNewTask()">확인</button>
-            <button class="cancel-btn" onclick="closeCreateTaskModal()">취소</button>
+        <div class="custom-modal-buttons">
+            <button class="custom-confirm-btn" onclick="addNewTask()">확인</button>
+            <button class="custom-cancel-btn" onclick="closeCreateTaskModal()">취소</button>
         </div>
     </div>
-    <div id="modalOverlay" class="modal-overlay"></div>
+    <div id="modalOverlay" class="custom-modal-overlay"></div>
 
     <%@ include file="/WEB-INF/views/module/footer.jsp" %>
 
@@ -135,21 +147,47 @@
 
         document.getElementById('modalOverlay').addEventListener('click', closeCreateTaskModal);
 
-        // 검색 기능
+        // ▼▼▼▼▼ 수정된 부분 ▼▼▼▼▼
+        const searchForm = document.getElementById('searchForm');
         const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('keypress', e => e.key === 'Enter' && performSearch());
-        document.querySelector('.search-icon').addEventListener('click', performSearch);
 
-        function performSearch() {
-            const query = searchInput.value;
-            window.location.href = '${pageContext.request.contextPath}/main/tasklist?search=' + encodeURIComponent(query);
+        // 검색 아이콘 클릭 시
+        document.querySelector('.search-icon').addEventListener('click', () => search_list(1));
+
+        // Enter 키 입력 시
+        searchInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // form의 기본 제출 동작 방지
+                search_list(1);
+            }
+        });
+
+        // 검색 실행 함수
+        function search_list(page) {
+            searchForm.page.value = page;
+            searchForm.submit();
         }
+
+        // 사이드바 활성화
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu li a');
+
+            sidebarLinks.forEach(function(link) {
+                const linkPath = link.getAttribute('href');
+                if (linkPath && currentPath.includes('/main/task')) {
+                    if (linkPath.includes('task')) { // URL에 'task'가 포함된 경우
+                        link.parentElement.classList.add('active');
+                    }
+                }
+            });
+        });
+        // ▲▲▲▲▲ 수정된 부분 ▲▲▲▲▲
 
         // 새 일감 추가 함수
         function addNewTask() {
             const newTask = {
-                // projectId는 세션 또는 다른 방식으로 가져와야 합니다. 여기서는 예시 값을 사용합니다.
-                projectId: "PROJECT-001", 
+                projectId: "PROJECT-001", // TODO: 실제 프로젝트 ID로 교체 필요
                 taskTitle: document.getElementById('newTaskTitle').value,
                 taskDescription: document.getElementById('newTaskDescription').value,
                 taskManagerId: document.getElementById('newTaskManagerId').value,
@@ -164,7 +202,7 @@
                 return;
             }
 
-            fetch('${pageContext.request.contextPath}/main/task', { // POST URL 변경
+            fetch('${pageContext.request.contextPath}/main/task', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newTask)

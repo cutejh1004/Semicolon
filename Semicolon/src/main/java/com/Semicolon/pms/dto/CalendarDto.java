@@ -3,7 +3,7 @@ package com.Semicolon.pms.dto;
 import java.util.Date;
 
 public class CalendarDto {
-    private int calendarId;
+    private String calendarId;
     private String calendarTitle;
     private String projectId;
     private String calendarContent;
@@ -13,8 +13,8 @@ public class CalendarDto {
     private Date calendarModifyDate;
     
     // Getters and Setters
-    public int getCalendarId() { return calendarId; }
-    public void setCalendarId(int calendarId) { this.calendarId = calendarId; }
+    public String getCalendarId() { return calendarId; }
+    public void setCalendarId(String calendarId) { this.calendarId = calendarId; }
     
     public String getCalendarTitle() { return calendarTitle; }
     public void setCalendarTitle(String calendarTitle) { this.calendarTitle = calendarTitle; }

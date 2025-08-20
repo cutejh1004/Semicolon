@@ -1,10 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+	xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="picturePath" class="java.lang.String"
+		c:value="${savePath.member.picture}" />
+	<bean id="summernotePath" class="java.lang.String"
+		c:value="${savePath.summernote.image}" />
+	<bean id="logSavedPath" class="java.lang.String"
+		c:value="${savePath.log.files}" />
+	<bean id="memberDAO" class="com.Semicolon.cmnt.dao.MemberDAOImpl"
+		c:session-ref="sqlSession" />
+	<bean id="boardDAO" class="com.Semicolon.cmnt.dao.BoardDAOImpl"
+		c:session-ref="sqlSession" />
+	<bean id="replyDAO" class="com.Semicolon.cmnt.dao.ReplyDAOImpl"
+		c:session-ref="sqlSession" />
+	<bean id="engineerDAO"
+		class="com.Semicolon.cmnt.dao.EngineerDAOImpl"
+		c:session-ref="sqlSession" />
+	<bean id="recruit_boardDAO"
+		class="com.Semicolon.cmnt.dao.Recruit_BoardDAOImpl"
+		c:session-ref="sqlSession" />
+	<bean id="recruit_boardService"
+		class="com.Semicolon.cmnt.service.Recruit_BoardServiceImpl"
+		c:recruit_boardDAO-ref="recruit_boardDAO"
+		c:summernotePath="some/path/here" c:replyDAO-ref="replyDAO" />
+	<bean id="engineerService"
+		class="com.Semicolon.cmnt.service.EngineerServiceImpl"
+		c:engineerDAO-ref="engineerDAO" />
+	<bean id="replyService"
+		class="com.Semicolon.cmnt.service.ReplyServiceImpl"
+		c:replyDAO-ref="replyDAO" />
+	<bean id="boardService"
+		class="com.Semicolon.cmnt.service.BoardServiceImpl"
+		c:boardDAO-ref="boardDAO" c:summernotePath-ref="summernotePath"
+		c:replyDAO-ref="replyDAO" />
+	<bean id="memberService"
+		class="com.Semicolon.cmnt.service.MemberServiceImpl"
+		c:memberDAO-ref="memberDAO" />
+
+	<bean id="createOrgDAO"
+		class="com.Semicolon.org.dao.CreateOrgDAOImpl"
+		c:sqlSession-ref="sqlSession" />
+	<bean id="createOrgService"
+		class="com.Semicolon.org.service.CreateOrgServiceImpl"
+		c:createOrgDAO-ref="createOrgDAO" />
+	<bean id="orgDetailDAO"
+		class="com.Semicolon.org.dao.OrgDetailDAOImpl"
+		c:sqlSession-ref="sqlSession" />
+	<bean id="orgDetailService"
+		class="com.Semicolon.org.service.OrgDetailServiceImpl"
+		c:orgDetailDAO-ref="orgDetailDAO" />
+		
+	<bean id="projectOrgDAO"
+		class="com.Semicolon.org.dao.ProjectOrgDAOImpl"
+		c:sqlSession-ref="sqlSession" />
+	<bean id="projectOrgService"
+		class="com.Semicolon.org.service.ProjectOrgServiceImpl"
+		c:projectOrgDAO-ref="projectOrgDAO" />
 	
-	<context:component-scan base-package="com.Semicolon.pms.service,com.Semicolon.org.service" />
+	<bean id="taskDAO" class="com.Semicolon.pms.dao.TaskDAOImpl"
+		c:sqlSession-ref="sqlSession" />
+	<bean id="taskService"
+		class="com.Semicolon.pms.service.TaskServiceImpl"
+		c:taskDAO-ref="taskDAO" c:taskReplyDAO-ref="taskReplyDAO" />
+		
+	<bean id="issueDAO" class="com.Semicolon.pms.dao.IssueDAOImpl"
+		c:sqlSession-ref="sqlSession" />
+	<bean id="issueService"
+		class="com.Semicolon.pms.service.IssueServiceImpl"
+		c:issueDAO-ref="issueDAO" c:issueReplyDAO-ref="issueReplyDAO" />
+		
+	<bean id="ganttDAO"
+		class="com.Semicolon.pms.dao.GanttDAOImpl"
+		c:sqlSession-ref="sqlSession" />
+	<bean id="ganttService"
+		class="com.Semicolon.pms.service.GanttServiceImpl"
+		c:ganttDAO-ref="ganttDAO" />
+		
+	<bean id="calendarDAO"
+		class="com.Semicolon.pms.dao.CalendarDAOImpl"
+		c:sqlSession-ref="sqlSession" />
+	<bean id="calendarService"
+		class="com.Semicolon.pms.service.CalendarServiceImpl"
+		c:calendarDAO-ref="calendarDAO" />
+	<bean id="budgetDAO" class="com.Semicolon.pms.dao.BudgetDAOImpl"
+		c:sqlSession-ref="sqlSession" />
+	<bean id="budgetService"
+		class="com.Semicolon.pms.service.BudgetServiceImpl"
+		c:budgetDAO-ref="budgetDAO" />
+	<bean id="member1DAO" class="com.Semicolon.org.dao.Member1DAOImpl"
+		c:sqlSession-ref="sqlSession" />
+
+	<bean id="member1Service"
+		class="com.Semicolon.org.service.Member1ServiceImpl">
+		<constructor-arg ref="member1DAO" />
+	</bean>
 	
+	
+	<bean id="taskReplyDAO"
+		class="com.Semicolon.pms.dao.TaskReplyDAOImpl">
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+
+	<bean id="taskReplyService"
+		class="com.Semicolon.pms.service.TaskReplyServiceImpl">
+		<property name="taskReplyDAO" ref="taskReplyDAO" />
+	</bean>
+	
+	<bean id="issueReplyDAO"
+		class="com.Semicolon.pms.dao.IssueReplyDAOImpl">
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+
+	<bean id="issueReplyService"
+		class="com.Semicolon.pms.service.IssueReplyServiceImpl">
+		<property name="issueReplyDAO" ref="issueReplyDAO" />
+	</bean>
 </beans>

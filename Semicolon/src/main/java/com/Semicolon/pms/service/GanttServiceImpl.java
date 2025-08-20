@@ -4,18 +4,20 @@ package com.Semicolon.pms.service;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.Semicolon.pms.dao.CalendarDAO;
 import com.Semicolon.pms.dao.GanttDAO;
 import com.Semicolon.pms.dto.GanttDto;
 
-@Service("ganttService")
 public class GanttServiceImpl implements GanttService {
 
-    @Autowired
     private GanttDAO ganttDAO;
 
+    public GanttServiceImpl(GanttDAO ganttDAO) {
+    	this.ganttDAO = ganttDAO;
+    }
+    
     @Override
     public List<GanttDto> getGanttDataByProjectId(String projectId) throws SQLException {
         return ganttDAO.getGanttDataByProjectId(projectId);
