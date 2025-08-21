@@ -1,12 +1,13 @@
 package com.Semicolon.org.dao;
 
-import com.Semicolon.org.dto.CreateOrgDTO;
 import java.util.Map;
 
+import com.Semicolon.org.dto.CreateOrgDTO;
+
 public interface CreateOrgDAO {
+
+    int isUserInAnyOrg(String userId);
+
     void createOrganization(CreateOrgDTO organization);
+    void updateEngineerOrgId(Map<String, String> params);
 }
-//CREATE SEQUENCE ORGANIZATION_SEQ
-//START WITH 1
-//INCREMENT BY 1
-//NOCACHE;  시퀀스 DB에 추가

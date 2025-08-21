@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.Semicolon.org.dao.CreateOrgDAO">
-
+	
+	<select id="isUserInAnyOrg" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM ORGANIZATION
+        WHERE INSTR(MEMBER, #{userId}) > 0
+    </select>
+	
     <insert id="createOrganization" parameterType="com.Semicolon.org.dto.CreateOrgDTO">
     <selectKey keyProperty="orId" resultType="String" order="BEFORE">
         SELECT 'ORG-' || LPAD(ORGANIZATION_SEQ.NEXTVAL, 4, '0') FROM DUAL
@@ -32,5 +38,11 @@
         '활동중'        -- MEMBER_STATUS에 기본값 '활동중' 추가
     )
 </insert>
+
+<update id="updateEngineerOrgId" parameterType="map">
+        UPDATE ENGINEER
+        SET OR_ID = #{orId}
+        WHERE USER_ID = #{userId}
+    </update>
     
 </mapper>

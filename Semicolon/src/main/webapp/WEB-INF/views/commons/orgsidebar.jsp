@@ -16,7 +16,7 @@
             </a>
         </li>
         <li>
-            <a href="${pageContext.request.contextPath}/org/detail">
+            <a href="${pageContext.request.contextPath}/org/my-org">
                 <i class="fas fa-building"></i> MY ORG
             </a>
         </li>

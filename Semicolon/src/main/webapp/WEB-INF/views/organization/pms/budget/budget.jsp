@@ -122,41 +122,41 @@
     </div>
     
     <%-- 예산 등록/상세보기 모달 --%>
-    <div id="budgetModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div id="budgetModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
                 <h3>예산 등록</h3>
                 <span class="close-btn">&times;</span>
             </div>
-            <div class="modal-body">
+            <div class="custom-modal-body">
                 <form>
-                    <div class="form-group">
+                    <div class="custom-form-group">
                         <label for="taskNumber">일감</label>
                         <input type="text" id="taskNumber" name="taskNumber" value="TSK-B" readonly>
                     </div>
-                    <div class="form-group">
+                    <div class="custom-form-group">
                         <label for="amount">할당 금액</label>
                         <input type="text" id="amount" name="amount" placeholder="₩1,500,000">
                     </div>
-                    <div class="form-group">
+                    <div class="custom-form-group">
                         <label for="usage">사용처</label>
                         <textarea id="usage" name="usage" rows="4" placeholder="예) AWS 서버 호스팅 비용"></textarea>
                     </div>
-                    <div class="form-group">
+                    <div class="custom-form-group">
                         <label for="date">지급 날짜</label>
                         <input type="date" id="date" name="date" value="2023-01-01">
                     </div>
-                    <div class="form-group">
+                    <div class="custom-form-group">
                         <label for="assignee">담당자</label>
                         <input type="text" id="assignee" name="assignee" placeholder="PM">
                     </div>
-                    <div class="form-group">
+                    <div class="custom-form-group">
                         <label for="notes">비고</label>
                         <textarea id="notes" name="notes" rows="2"></textarea>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="custom-modal-footer">
                 <button type="button" class="btn btn-primary">등록</button>
                 <button type="button" class="btn btn-secondary close-btn">취소</button>
             </div>

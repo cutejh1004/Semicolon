@@ -14,8 +14,7 @@
             eng_id          AS engId,
             group_id        AS groupId
         FROM
-            recruit_reply2
-        WHERE
+            recruit_reply2 WHERE
             issue_id = #{issueId}
         ORDER BY
             reg_date ASC
@@ -23,30 +22,15 @@
 
     <insert id="insertReply" parameterType="com.Semicolon.pms.dto.IssueReplyDTO">
         INSERT INTO recruit_reply2 (
-            reply_number,
-            issue_id,
-            userid,
-            reply_content,
-            reg_date,
-            update_date,
-            eng_id,
-            group_id
+            reply_number, issue_id, userid, reply_content, reg_date, update_date, eng_id, group_id
         ) VALUES (
-            'REPLY-' || RECRUIT_REPLY2_SEQ.NEXTVAL,
-            #{issueId},
-            #{userId},
-            #{replyContent},
-            SYSDATE,
-            SYSDATE,
-            #{engId},
-            #{groupId}
+            'REPLY-' || RECRUIT_REPLY2_SEQ.NEXTVAL, #{issueId}, #{userId}, #{replyContent}, SYSDATE, SYSDATE, #{engId}, #{groupId}
         )
     </insert>
 
     <update id="updateReply" parameterType="com.Semicolon.pms.dto.IssueReplyDTO">
         UPDATE
-            recruit_reply2
-        SET
+            recruit_reply2 SET
             reply_content = #{replyContent},
             update_date = SYSDATE
         WHERE
@@ -55,15 +39,13 @@
 
     <delete id="deleteReply" parameterType="string">
         DELETE FROM
-            recruit_reply2
-        WHERE
+            recruit_reply2 WHERE
             reply_number = #{replyNumber}
     </delete>
     
     <delete id="deleteRepliesByIssueId" parameterType="string">
         DELETE FROM
-            recruit_reply2
-        WHERE
+            recruit_reply2 WHERE
             issue_id = #{issueId}
     </delete>
 

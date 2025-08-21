@@ -56,4 +56,9 @@ public class TaskServiceImpl implements TaskService {
         taskReplyDAO.deleteRepliesByTaskId(taskId); // 메서드명은 ReplyDAO의 스펙에 따라 변경될 수 있습니다.
         taskDAO.deleteTask(taskId);
     }
+    
+    @Override
+    public List<TaskDto> getTaskListByProjectId(String projectId) throws SQLException {
+        return taskDAO.getTaskListByProjectId(projectId);
+    }
 }

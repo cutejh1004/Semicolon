@@ -29,7 +29,6 @@ public class ProjectOrgController {
         projectList.add(Map.of(
             "projectId", "PJ-001",
             "projectName", "사내 그룹웨어 시스템 개발",
-            "projectStatus", "진행 중",
             "projectManagerId", "김철수",
             "projectStartDate", new Date(),
             "projectEndDate", new Date()
@@ -37,7 +36,6 @@ public class ProjectOrgController {
         projectList.add(Map.of(
             "projectId", "PJ-002",
             "projectName", "모바일 앱 UI/UX 개편",
-            "projectStatus", "완료",
             "projectManagerId", "이영희",
             "projectStartDate", new Date(),
             "projectEndDate", new Date()

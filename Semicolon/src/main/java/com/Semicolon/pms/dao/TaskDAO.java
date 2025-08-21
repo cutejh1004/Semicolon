@@ -28,4 +28,6 @@ public interface TaskDAO {
     
     // 일감 삭제
     void deleteTask(@Param("taskId") String taskId) throws SQLException;
+    
+    List<TaskDto> getTaskListByProjectId(String projectId) throws SQLException;
 }

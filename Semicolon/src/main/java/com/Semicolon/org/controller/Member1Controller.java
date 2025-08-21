@@ -1,93 +1,65 @@
 package com.Semicolon.org.controller;
 
-import com.Semicolon.org.dto.Member1DTO;
-import com.Semicolon.org.service.Member1Service;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; // RedirectAttributes import
+
+import com.Semicolon.cmnt.dto.MemberVO; // MemberVO import
+import com.Semicolon.org.dto.Member1DTO;
+import com.Semicolon.org.service.Member1Service;
+import com.Semicolon.org.service.OrgDetailService; // OrgDetailService import
 
 @Controller
 @RequestMapping("/org")
 public class Member1Controller {
 
-    private final Member1Service memberService;
+    private final Member1Service member1Service;
+    private final OrgDetailService orgDetailService; // 조직 ID 조회를 위해 추가
 
-    public Member1Controller(Member1Service memberService) {
-        this.memberService = memberService;
+    public Member1Controller(Member1Service member1Service, OrgDetailService orgDetailService) {
+        this.member1Service = member1Service;
+        this.orgDetailService = orgDetailService;
     }
 
-    /**
-     * 특정 조직의 멤버 목록 페이지를 보여줍니다.
-     */
     @GetMapping("/members")
-    public String showOrgMembers(@RequestParam(value = "orId", required = false, defaultValue = "0") String orId, Model model) {
-        List<Member1DTO> memberList = memberService.getMemberList(orId);
+    public String showOrgMembers(@RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "role", required = false) String role,
+            @RequestParam(value = "status", required = false) String status,
+            HttpSession session, Model model, RedirectAttributes rttr) { 
+        
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            return "redirect:/login"; 
+        }
+
+        String orId = orgDetailService.getOrgIdByUserId(loginUser.getUser_id());
+
+        if (orId == null) {
+            rttr.addFlashAttribute("msg", "소속된 조직이 없습니다.");
+            return "redirect:/org/create";
+        }
+        
+        Map<String, Object> params = new HashMap<>();
+        params.put("orId", orId);
+        params.put("keyword", keyword);
+        params.put("role", role);
+        params.put("status", status);
+        
+        List<Member1DTO> memberList = member1Service.getMemberList(params);
+        
         model.addAttribute("memberList", memberList);
-        return "organization/member1";
+        model.addAttribute("loginUser", loginUser);
+        return "organization/member1"; // View 이름 확인 (member1.jsp)
     }
 
-    /**
-     * PM이 멤버의 역할을 변경합니다. (PM 권한 확인 필요)
-     */
-    @PostMapping("/updateRole")
-    @ResponseBody
-    public Map<String, Object> updateMemberRole(@RequestParam("userId") String userId,
-                                                @RequestParam("newRole") String newRole,
-                                                HttpSession session) {
-        Map<String, Object> response = new HashMap<>();
-        // 실제 PM 권한 확인 로직 (예: 세션에서 ROLE 가져와서 "PM"인지 확인)
-        String currentRole = (String) session.getAttribute("ROLE");
-        if (!"PM".equals(currentRole)) {
-            response.put("success", false);
-            response.put("message", "권한이 없습니다.");
-            return response;
-        }
-
-        int result = memberService.updateMemberRole(userId, newRole);
-        if (result > 0) {
-            response.put("success", true);
-            response.put("message", "권한이 성공적으로 변경되었습니다.");
-        } else {
-            response.put("success", false);
-            response.put("message", "권한 변경에 실패했습니다.");
-        }
-        return response;
-    }
-
-    /**
-     * PM이 멤버를 조직에서 추방합니다. (PM 권한 확인 필요)
-     */
-    @PostMapping("/removeMember")
-    @ResponseBody
-    public Map<String, Object> removeMemberFromOrg(@RequestParam("userId") String userId,
-                                                   @RequestParam("orId") String orId, // int -> String으로 변경
-                                                   HttpSession session) {
-        Map<String, Object> response = new HashMap<>();
-        // 실제 PM 권한 확인 로직 (예: 세션에서 ROLE 가져와서 "PM"인지 확인)
-        String currentRole = (String) session.getAttribute("ROLE");
-        if (!"PM".equals(currentRole)) {
-            response.put("success", false);
-            response.put("message", "권한이 없습니다.");
-            return response;
-        }
-
-        int result = memberService.removeMember(userId, orId); // 파라미터 타입 변경
-        if (result > 0) {
-            response.put("success", true);
-            response.put("message", "멤버가 성공적으로 추방되었습니다.");
-        } else {
-            response.put("success", false);
-            response.put("message", "멤버 추방에 실패했습니다.");
-        }
-        return response;
-    }
+    // ... (updateRole, removeMember 메소드는 잠시 후 JSP와 함께 수정) ...
 }

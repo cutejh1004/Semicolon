@@ -1,22 +1,31 @@
+// src/main/java/com/Semicolon/org/dao/CreateOrgDAOImpl.java
 package com.Semicolon.org.dao;
 
-import com.Semicolon.org.dto.CreateOrgDTO;
 import java.util.Map;
-import org.mybatis.spring.SqlSessionTemplate; // 추가
+
+import org.mybatis.spring.SqlSessionTemplate;
+
+import com.Semicolon.org.dto.CreateOrgDTO;
 
 public class CreateOrgDAOImpl implements CreateOrgDAO {
 
-    // SqlSessionTemplate을 직접 주입받을 필드 선언
     private SqlSessionTemplate sqlSession;
 
-    // XML에서 c:session-ref="sqlSession"으로 주입될 생성자
     public CreateOrgDAOImpl(SqlSessionTemplate sqlSession) {
         this.sqlSession = sqlSession;
+    }
+
+    @Override
+    public int isUserInAnyOrg(String userId) {
+        return sqlSession.selectOne("com.Semicolon.org.dao.CreateOrgDAO.isUserInAnyOrg", userId);
     }
 
     @Override
     public void createOrganization(CreateOrgDTO organization) {
         sqlSession.insert("com.Semicolon.org.dao.CreateOrgDAO.createOrganization", organization);
     }
-
+    @Override
+    public void updateEngineerOrgId(Map<String, String> params) {
+        sqlSession.update("com.Semicolon.org.dao.CreateOrgDAO.updateEngineerOrgId", params);
+    }
 }

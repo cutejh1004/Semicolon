@@ -17,7 +17,7 @@
         <result property="issueDeleteDate" column="ISSUE_DELETE_DATE" />
         <result property="issueManagerId" column="ISSUE_MANAGER_ID" />
         <result property="issueUrgency" column="ISSUE_URGENCY" />
-        <result property="tasktitle" column="TASK_TITLE" />
+        <result property="taskTitle" column="TASK_TITLE" />
     </resultMap>
 
     <!-- 페이징, 검색, 그리고 projectId를 기준으로 이슈 목록을 조회하는 쿼리 -->
@@ -33,22 +33,14 @@
             LEFT JOIN
                 TASK t ON i.TASK_ID = t.TASK_ID
             WHERE
-                i.PROJECT_ID = #{pageMaker.projectId, jdbcType=VARCHAR}
-            <if test="pageMaker.searchQuery != null and !pageMaker.searchQuery.equals('')">
-                AND i.ISSUE_TITLE LIKE '%' || #{pageMaker.searchQuery, jdbcType=VARCHAR} || '%'
-            </if>
+                i.PROJECT_ID = #{projectId, jdbcType=VARCHAR} <if test="searchQuery != null and searchQuery != ''"> AND i.ISSUE_TITLE LIKE '%' || #{searchQuery, jdbcType=VARCHAR} || '%' </if>
         )
-        WHERE rnum BETWEEN #{pageMaker.startRow} AND #{pageMaker.endRow}
-    </select>
+        WHERE rnum BETWEEN #{startRow} AND #{endRow} </select>
     
-    <!-- projectId와 검색 조건에 맞는 전체 게시물 수를 조회하는 쿼리 -->
     <select id="getTotalCountByProjectId" parameterType="com.Semicolon.command.PageMaker" resultType="int">
         SELECT COUNT(*)
         FROM ISSUE
-        WHERE PROJECT_ID = #{pageMaker.projectId, jdbcType=VARCHAR}
-        <if test="pageMaker.searchQuery != null and !pageMaker.searchQuery.equals('')">
-            AND ISSUE_TITLE LIKE '%' || #{pageMaker.searchQuery, jdbcType=VARCHAR} || '%'
-        </if>
+        WHERE PROJECT_ID = #{projectId, jdbcType=VARCHAR} <if test="searchQuery != null and searchQuery != ''"> AND ISSUE_TITLE LIKE '%' || #{searchQuery, jdbcType=VARCHAR} || '%' </if>
     </select>
 
     <!-- 새로운 이슈 등록 -->

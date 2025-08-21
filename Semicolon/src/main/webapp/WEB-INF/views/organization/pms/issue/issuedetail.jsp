@@ -102,8 +102,8 @@
 	<%-- /main-layout-container --%>
 
 	<%-- 이슈 수정 모달 HTML --%>
-	<div id="editIssueModal" class="modal">
-		<div class="modal-content">
+	<div id="editIssueModal" class="custom-modal">
+		<div class="custom-modal-content">
 			<h2>이슈 수정</h2>
 			<form id="editIssueForm">
 				<input type="hidden" id="editIssueId" value="${issue.issueId}">
@@ -138,13 +138,13 @@
 						<c:if test="${issue.issueUrgency eq 'Minor'}">selected</c:if>>Minor</option>
 				</select>
 			</form>
-			<div class="modal-buttons">
+			<div class="custom-modal-buttons">
 				<button class="confirm-btn" onclick="submitEditIssue()">확인</button>
 				<button class="cancel-btn" onclick="closeEditIssueModal()">취소</button>
 			</div>
 		</div>
 	</div>
-	<div id="modalOverlayEdit" class="modal-overlay"></div>
+	<div id="modalOverlayEdit" class="custom-modal-overlay"></div>
 
 	<%@ include file="/WEB-INF/views/module/footer.jsp"%>
 

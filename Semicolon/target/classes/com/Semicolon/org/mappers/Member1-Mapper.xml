@@ -14,21 +14,37 @@
         <result column="ROLE" property="memberRole"/>
     </resultMap>
 
-    <select id="getMemberListByOrgId" parameterType="String" resultMap="member1ResultMap">
+    <select id="getMemberListByOrgId" parameterType="map" resultType="com.Semicolon.org.dto.Member1DTO">
         SELECT
-            E.ENG_ID,
-            E.USER_ID,
-            E.MAJOR,
-            E.INTRODUCE,
-            M.NAME,
-            M.EMAIL,
-            M.ROLE
+            E.ENG_ID        AS engId,
+            E.USER_ID       AS userId,
+            E.MAJOR         AS major,
+            E.INTRODUCE     AS introduce,
+            M.NAME          AS name,
+            M.EMAIL         AS email,
+            M.ROLE          AS memberRole,
+            'active'        AS status  -- 임시로 모든 멤버의 상태를 'active'로 지정
         FROM
             ENGINEER E
         JOIN
             MEMBER M ON E.USER_ID = M.USER_ID
         WHERE
             E.OR_ID = #{orId}
+            
+            <if test="keyword != null and keyword != ''">
+                AND (M.NAME LIKE '%' || #{keyword} || '%' OR M.USER_ID LIKE '%' || #{keyword} || '%')
+            </if>
+            
+            <if test="role != null and role != ''">
+                AND M.ROLE = #{role}
+            </if>
+            
+            <if test="status != null and status != ''">
+                AND 'active' = #{status}
+            </if>
+            
+        ORDER BY
+            M.NAME ASC
     </select>
     
     <update id="updateMemberRole" parameterType="map">

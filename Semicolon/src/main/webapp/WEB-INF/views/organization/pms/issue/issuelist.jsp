@@ -83,15 +83,16 @@
         </div>
     </div>
 
-    <div id="createIssueModal" class="modal">
+    <div id="createIssueModal" class="custom-modal">
         <h2>새 이슈 생성</h2>
-        <div class="modal-content">
+        <div class="custom-modal-content">
+        <div class="custom-modal-form-group">
             <label for="newIssueTitle">이슈 이름</label>
             <input type="text" id="newIssueTitle" placeholder="이슈 제목을 입력하세요">
-
+		
             <label for="newIssueContent">이슈 설명</label>
             <textarea id="newIssueContent" placeholder="상세 설명을 입력하세요"></textarea>
-
+		<div class="custom-modal-form-group">
             <label for="statusSelect">진행도</label>
             <select id="statusSelect">
                 <option value="">선택</option>
@@ -100,7 +101,8 @@
                 <option value="검토 중">검토 중</option>
                 <option value="대기 중">대기 중</option>
             </select>
-
+		</div>
+		<div class="custom-modal-form-group">
             <label for="urgencySelect">우선순위</label>
             <select id="urgencySelect">
                 <option value="">선택</option>
@@ -109,7 +111,8 @@
                 <option value="Moderate">Moderate</option>
                 <option value="Minor">Minor</option>
             </select>
-
+		</div>
+		<div class="custom-modal-form-group">
             <label for="taskNameSelect">일감이름</label>
             <select id="taskNameSelect">
                 <option value="">선택</option>
@@ -117,13 +120,15 @@
                     <option value="${task.taskId}">${task.taskName}</option>
                 </c:forEach>
             </select>
+            </div>
         </div>
-        <div class="modal-buttons">
-            <button class="confirm-btn" onclick="addNewIssue()">확인</button>
-            <button class="cancel-btn" onclick="closeCreateIssueModal()">취소</button>
+        <div class="custom-modal-buttons">
+            <button class="custom-confirm-btn" onclick="addNewIssue()">확인</button>
+            <button class="custom-cancel-btn" onclick="closeCreateIssueModal()">취소</button>
+        </div>
         </div>
     </div>
-    <div id="modalOverlay" class="modal-overlay"></div>
+    <div id="modalOverlay" class="custom-modal-overlay"></div>
 
     <%@ include file="/WEB-INF/views/module/footer.jsp" %>
     

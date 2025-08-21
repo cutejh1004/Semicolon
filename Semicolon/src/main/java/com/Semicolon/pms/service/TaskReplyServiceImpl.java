@@ -2,8 +2,10 @@
 
 package com.Semicolon.pms.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import com.Semicolon.pms.dao.TaskReplyDAO;
+import com.Semicolon.pms.dto.IssueReplyDTO;
 import com.Semicolon.pms.dto.TaskReplyDTO;
 
 public class TaskReplyServiceImpl implements TaskReplyService {
@@ -14,22 +16,22 @@ public class TaskReplyServiceImpl implements TaskReplyService {
     }
 
     @Override
-    public List<TaskReplyDTO> getReplyList(String taskId) throws Exception {
-        return taskReplyDAO.selectReplyList(taskId);
+    public List<TaskReplyDTO> selectReplyList(String issueId) throws SQLException {
+        return taskReplyDAO.selectReplyList(issueId);
     }
 
     @Override
-    public void registerReply(TaskReplyDTO dto) throws Exception {
+    public void insertReply(TaskReplyDTO dto) throws SQLException {
         taskReplyDAO.insertReply(dto);
     }
 
     @Override
-    public void modifyReply(TaskReplyDTO dto) throws Exception {
+    public void updateReply(TaskReplyDTO dto) throws SQLException {
         taskReplyDAO.updateReply(dto);
     }
 
     @Override
-    public void removeReply(String replyNumber) throws Exception {
+    public void deleteReply(String replyNumber) throws SQLException {
         taskReplyDAO.deleteReply(replyNumber);
     }
 }

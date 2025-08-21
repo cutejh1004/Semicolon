@@ -4,11 +4,11 @@
 <mapper namespace="com.Semicolon.org.dao.OrgDetailDAO">
 	<select id="selectOrgIdByUserId" parameterType="string" resultType="string">
     	SELECT OR_ID
-    	FROM engineer
-    	WHERE user_id = #{userId}
+    	FROM ORGANIZATION
+    	WHERE INSTR(MEMBER, #{userId}) > 0 AND ROWNUM = 1 -- ENGINEER 테이블 대신 ORGANIZATION 테이블 직접 조회
 	</select>
 	
-    <select id="selectOrgById" parameterType="string" resultType="com.Semicolon.org.dto.OrgDetailDTO">
+    <select id="selectOrgByIdAndUserId" resultType="com.Semicolon.org.dto.OrgDetailDTO">
         SELECT 
             OR_ID           AS orId,
             OR_NAME         AS orName,
@@ -19,6 +19,8 @@
             OR_LINK_ADDRESS AS orLinkAddress
         FROM ORGANIZATION
         WHERE OR_ID = #{orId}
+          AND INSTR(MEMBER, #{userId}) > 0 -- 현재 사용자가 멤버 목록에 포함되어 있는지 확인
+          AND or_delete_date IS NULL      -- 삭제되지 않은 조직만 조회
     </select>
     
     <update id="updateOrg" parameterType="com.Semicolon.org.dto.OrgDetailDTO">
@@ -32,11 +34,10 @@
     </update>
 
     <update id="deleteOrg" parameterType="string">
-    UPDATE ORGANIZATION
-    SET 
-        or_delete_date = SYSDATE
-    WHERE 
-        OR_ID = #{orId}
-</update>
-
+        UPDATE ORGANIZATION
+        SET 
+            or_delete_date = SYSDATE
+        WHERE 
+            OR_ID = #{orId}
+    </update>
 </mapper>

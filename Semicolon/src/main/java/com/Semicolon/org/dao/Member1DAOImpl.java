@@ -15,8 +15,8 @@ public class Member1DAOImpl implements Member1DAO {
     }
 
     @Override
-    public List<Member1DTO> getMemberListByOrgId(String orId) {
-        return sqlSession.selectList("com.Semicolon.org.dao.Member1DAO.getMemberListByOrgId", orId);
+    public List<Member1DTO> getMemberListByOrgId(Map<String, Object> params) {
+        return sqlSession.selectList("com.Semicolon.org.dao.Member1DAO.getMemberListByOrgId", params);
     }
     
     // 인터페이스에 맞게 파라미터 수정

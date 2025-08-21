@@ -62,7 +62,7 @@
 				max-sessions="1"
 				session-registry-ref="sessionRegistry"
 			/>		
-		</session-management>	 		
+		</session-management>
 	</http>
 	
 		<beans:bean id="sessionRegistry"	

@@ -7,8 +7,15 @@
     <title>LINKED - 조직 생성</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/common.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/createOrg.css">
+
 </head>
 <body>
+	<script>
+        const msg = "${msg}";
+        if (msg) {
+            alert(msg);
+        }
+    </script>
     <%@ include file="/WEB-INF/views/module/header.jsp" %>
     <div class="main-layout-container">
         <jsp:include page="/WEB-INF/views/commons/orgsidebar.jsp" />

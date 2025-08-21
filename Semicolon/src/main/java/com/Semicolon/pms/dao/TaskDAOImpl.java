@@ -47,4 +47,9 @@ public class TaskDAOImpl implements TaskDAO {
     public void deleteTask(String taskId) throws SQLException {
         sqlSession.delete("com.Semicolon.pms.dao.TaskDAO.deleteTask", taskId);
     }
+    
+    @Override
+    public List<TaskDto> getTaskListByProjectId(String projectId) throws SQLException {
+        return sqlSession.selectList("com.Semicolon.pms.dao.TaskDAO.getTaskListByProjectId", projectId);
+    }
 }

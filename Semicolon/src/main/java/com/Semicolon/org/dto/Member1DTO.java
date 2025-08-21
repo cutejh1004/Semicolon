@@ -13,7 +13,7 @@ public class Member1DTO {
     private String name;
     private String email;
     private String memberRole; // 권한
-	
+    private String status;
     
     
     public String getOrId() {
@@ -64,6 +64,11 @@ public class Member1DTO {
 	public void setMemberRole(String memberRole) {
 		this.memberRole = memberRole;
 	}
-    
+	public String getStatus() { 
+		return status; 
+	}
+    public void setStatus(String status) { 
+    	this.status = status; 
+    }
     
 }

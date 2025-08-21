@@ -1,14 +1,12 @@
-// src/main/java/com/Semicolon/pms/service/IssueReplyService.java
-
 package com.Semicolon.pms.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import com.Semicolon.pms.dto.IssueReplyDTO;
 
 public interface IssueReplyService {
-
-    List<IssueReplyDTO> getReplyList(String issueId) throws Exception;
-    void registerReply(IssueReplyDTO dto) throws Exception;
-    void modifyReply(IssueReplyDTO dto) throws Exception;
-    void removeReply(String replyNumber) throws Exception; // int -> String
+    List<IssueReplyDTO> selectReplyList(String issueId) throws SQLException;
+    void insertReply(IssueReplyDTO dto) throws SQLException;
+    void updateReply(IssueReplyDTO dto) throws SQLException;
+    void deleteReply(String replyNumber) throws SQLException;
 }

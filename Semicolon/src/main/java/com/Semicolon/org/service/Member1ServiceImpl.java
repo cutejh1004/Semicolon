@@ -1,9 +1,12 @@
 package com.Semicolon.org.service;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import com.Semicolon.org.dao.Member1DAO;
 import com.Semicolon.org.dto.Member1DTO;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 public class Member1ServiceImpl implements Member1Service {
 
@@ -14,8 +17,8 @@ public class Member1ServiceImpl implements Member1Service {
     }
     
     @Override
-    public List<Member1DTO> getMemberList(String orId) {
-        return memberDAO.getMemberListByOrgId(orId);
+    public List<Member1DTO> getMemberList(Map<String, Object> params) {
+        return memberDAO.getMemberListByOrgId(params);
     }
     
     @Override

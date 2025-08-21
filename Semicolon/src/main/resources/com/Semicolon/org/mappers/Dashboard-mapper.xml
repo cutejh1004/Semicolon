@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.Semicolon.org.dao.DashboardDAO">
+
+    <select id="getTotalProjectStats" resultType="com.Semicolon.org.dto.DashboardStatsDto">
+        SELECT
+            (SELECT SUM(LENGTH(OR_PROJECT) - LENGTH(REPLACE(OR_PROJECT, ',', '')) + 1)
+             FROM ORGANIZATION
+             WHERE OR_PROJECT IS NOT NULL) AS totalProjects,
+            (SELECT COUNT(*)
+             FROM PROJECT
+             WHERE PROJECT_STATUS = '완료') AS completedProjects
+    </select>
+    
+    <select id="getQuarterlyBestCrews" resultType="com.Semicolon.org.dto.CrewRankingDto">
+        SELECT 
+            T1.OR_MANAGER_ID AS crewName,
+            COUNT(T2.PROJECT_ID) AS projectCount,
+            (LENGTH(T1.MEMBER) - LENGTH(REPLACE(T1.MEMBER, ',', '')) + 1) AS memberCount
+        FROM 
+            ORGANIZATION T1
+        JOIN
+            PROJECT T2 ON T1.OR_ID = T2.OR_ID
+        WHERE 
+            T2.PROJECT_STATUS = '완료'
+            AND QUARTER(T2.PROJECT_END_DATE) = QUARTER(NOW()) 
+            AND YEAR(T2.PROJECT_END_DATE) = YEAR(NOW())
+        GROUP BY 
+            T1.OR_MANAGER_ID, T1.MEMBER
+        ORDER BY 
+            projectCount DESC
+        LIMIT 3
+    </select>
+    
+    <select id="getMonthlyHotCrews" resultType="com.Semicolon.org.dto.CrewRankingDto">
+        SELECT 
+            T1.OR_MANAGER_ID AS crewName,
+            COUNT(T2.PROJECT_ID) AS projectCount,
+            (LENGTH(T1.MEMBER) - LENGTH(REPLACE(T1.MEMBER, ',', '')) + 1) AS memberCount
+        FROM 
+            ORGANIZATION T1
+        JOIN
+            PROJECT T2 ON T1.OR_ID = T2.OR_ID
+        WHERE 
+            T2.PROJECT_STATUS = '완료'
+            AND MONTH(T2.PROJECT_END_DATE) = MONTH(NOW())
+            AND YEAR(T2.PROJECT_END_DATE) = YEAR(NOW())
+        GROUP BY 
+            T1.OR_MANAGER_ID, T1.MEMBER
+        ORDER BY 
+            projectCount DESC
+        LIMIT 3
+    </select>
+    
+</mapper>

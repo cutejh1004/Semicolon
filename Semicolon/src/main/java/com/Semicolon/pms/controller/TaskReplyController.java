@@ -22,11 +22,11 @@ public class TaskReplyController {
     }
 
     // 1. 특정 일감의 댓글 목록 조회
-    @GetMapping("/{taskId}")
+    @RequestMapping(value = "/{taskId}", method = RequestMethod.GET)
     public ResponseEntity<List<TaskReplyDTO>> list(@PathVariable("taskId") String taskId) {
-        ResponseEntity<List<TaskReplyDTO>> entity;
+        ResponseEntity<List<TaskReplyDTO>> entity = null;
         try {
-            List<TaskReplyDTO> replies = taskReplyService.getReplyList(taskId);
+            List<TaskReplyDTO> replies = taskReplyService.selectReplyList(taskId);
             entity = new ResponseEntity<>(replies, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,12 +36,12 @@ public class TaskReplyController {
     }
 
     // 2. 새 댓글 등록
-    @PostMapping("")
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<String> register(@RequestBody TaskReplyDTO dto) {
-        ResponseEntity<String> entity;
+        ResponseEntity<String> entity = null;
         try {
             // 참고: 실제 구현 시 세션 등에서 작성자 정보를 가져와 dto에 설정해야 합니다.
-            taskReplyService.registerReply(dto);
+            taskReplyService.insertReply(dto);
             entity = new ResponseEntity<>("SUCCESS", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,12 +51,12 @@ public class TaskReplyController {
     }
 
     // 3. 댓글 수정
-    @RequestMapping(value = "/{replyNumber}", method = {RequestMethod.PUT, RequestMethod.PATCH})
+    @RequestMapping(value = "/{replyNumber}", method = RequestMethod.PUT)
     public ResponseEntity<String> update(@PathVariable("replyNumber") String replyNumber, @RequestBody TaskReplyDTO dto) {
-        ResponseEntity<String> entity;
+        ResponseEntity<String> entity = null;
         try {
             dto.setReplyNumber(replyNumber);
-            taskReplyService.modifyReply(dto);
+            taskReplyService.updateReply(dto);
             entity = new ResponseEntity<>("SUCCESS", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,11 +66,11 @@ public class TaskReplyController {
     }
 
     // 4. 댓글 삭제
-    @DeleteMapping("/{replyNumber}")
+    @RequestMapping(value = "/{replyNumber}", method = RequestMethod.DELETE)
     public ResponseEntity<String> remove(@PathVariable("replyNumber") String replyNumber) {
         ResponseEntity<String> entity;
         try {
-            taskReplyService.removeReply(replyNumber);
+            taskReplyService.deleteReply(replyNumber);
             entity = new ResponseEntity<>("SUCCESS", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

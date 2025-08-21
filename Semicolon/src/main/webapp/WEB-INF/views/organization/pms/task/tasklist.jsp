@@ -135,15 +135,29 @@
     <%@ include file="/WEB-INF/views/module/footer.jsp" %>
 
     <script>
-        function openCreateTaskModal() {
-            document.getElementById('createTaskModal').style.display = 'block';
-            document.getElementById('modalOverlay').style.display = 'block';
-        }
+    	const currentProjectId = "${projectId}"; 
+    
+    	function openCreateTaskModal() {
+    	    console.log('Attempting to open modal...'); // Add this line
+    	    const taskModal = document.getElementById('createTaskModal');
+    	    const modalOverlay = document.getElementById('modalOverlay');
 
-        function closeCreateTaskModal() {
-            document.getElementById('createTaskModal').style.display = 'none';
-            document.getElementById('modalOverlay').style.display = 'none';
-        }
+    	    if (taskModal && modalOverlay) {
+    	        taskModal.style.display = 'block';
+    	        modalOverlay.style.display = 'block';
+    	        document.body.classList.add('modal-active');
+    	        console.log('Modal and overlay display set to block. Body class added.'); // Add this line
+    	    } else {
+    	        console.error('Error: createTaskModal or modalOverlay element not found!'); // Add this line
+    	    }
+    	}
+
+    	function closeCreateTaskModal() {
+    	    console.log('closeCreateTaskModal called!'); // Add this
+    	    document.getElementById('createTaskModal').style.display = 'none';
+    	    document.getElementById('modalOverlay').style.display = 'none';
+    	    document.body.classList.remove('modal-active');
+    	}
 
         document.getElementById('modalOverlay').addEventListener('click', closeCreateTaskModal);
 
@@ -155,17 +169,21 @@
         document.querySelector('.search-icon').addEventListener('click', () => search_list(1));
 
         // Enter 키 입력 시
-        searchInput.addEventListener('keypress', e => {
-            if (e.key === 'Enter') {
-                e.preventDefault(); // form의 기본 제출 동작 방지
-                search_list(1);
-            }
-        });
+        searchInput.addEventListener('keypress', function(event) {
+        	if (event.key === 'Enter') {
+            	search_list(1);
+        	}
+    	});
+    
+    	document.querySelector('.search-bar .search-icon').addEventListener('click', function() {
+        	search_list(1);
+    	});
 
         // 검색 실행 함수
         function search_list(page) {
-            searchForm.page.value = page;
-            searchForm.submit();
+        	jobForm.searchQuery.value = searchInput.value;
+            jobForm.page.value = page;
+            jobForm.submit();
         }
 
         // 사이드바 활성화
@@ -175,48 +193,78 @@
 
             sidebarLinks.forEach(function(link) {
                 const linkPath = link.getAttribute('href');
-                if (linkPath && currentPath.includes('/main/task')) {
-                    if (linkPath.includes('task')) { // URL에 'task'가 포함된 경우
+                if (linkPath && currentPath.includes('/main/project')) {
+                    if (linkPath.includes('tasklist')) { // URL에 'task'가 포함된 경우
                         link.parentElement.classList.add('active');
                     }
                 }
             });
         });
-        // ▲▲▲▲▲ 수정된 부분 ▲▲▲▲▲
 
-        // 새 일감 추가 함수
         function addNewTask() {
-            const newTask = {
-                projectId: "PROJECT-001", // TODO: 실제 프로젝트 ID로 교체 필요
-                taskTitle: document.getElementById('newTaskTitle').value,
-                taskDescription: document.getElementById('newTaskDescription').value,
-                taskManagerId: document.getElementById('newTaskManagerId').value,
-                taskStartDate: document.getElementById('newTaskStartDate').value,
-                taskEndDate: document.getElementById('newTaskEndDate').value,
-                taskStatus: document.getElementById('newStatusSelect').value,
-                taskUrgency: document.getElementById('newUrgencySelect').value
-            };
-
+        	const taskTitle = document.getElementById('newTaskTitle').value;
+            const taskDescription = document.getElementById('newTaskDescription').value;
+            const taskManagerId = document.getElementById('newTaskManagerId').value;
+            const taskStartDate = document.getElementById('newTaskStartDate').value;
+            const taskEndDate = document.getElementById('newTaskEndDate').value;
+            const taskStatus = document.getElementById('newStatusSelect').value;
+            const taskUrgency = document.getElementById('newUrgencySelect').value;
+        	
+        	const projectId = currentProjectId;
+        	
             if (!newTask.taskTitle || !newTask.taskManagerId || !newTask.taskStatus || !newTask.taskUrgency) {
                 alert('제목, 담당자, 상태, 중요도는 필수 입력 항목입니다.');
                 return;
             }
 
-            fetch('${pageContext.request.contextPath}/main/task', {
+            const newTask = {
+                    taskTitle: taskTitle,
+                    taskDescription: taskDescription,
+                    taskManagerId: taskManagerId,
+                    taskStartDate: taskStartDate,
+                    taskEndDate: taskEndDate,
+                    [cite_start]taskStatus: taskStatus, [cite: 43]
+                    taskUrgency: taskUrgency,
+                    projectId: projectId
+                };
+
+            if (!newTask.taskTitle || !newTask.taskManagerId || !newTask.taskStatus || !newTask.taskUrgency) {
+                alert('제목, 담당자, 상태, 중요도는 필수 입력 항목입니다.');
+                [cite_start]return; [cite: 42]
+            }
+            
+            [cite_start]const postUrl = `${pageContext.request.contextPath}/main/project/${projectId}/tasklist`; [cite: 44]
+            
+            fetch(postUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newTask)
+            [cite_start]}) [cite: 45]
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        [cite_start]throw new Error('404 (Not Found): 요청된 URL을 찾을 수 없습니다. URL 경로를 확인해주세요.'); [cite: 45, 46]
+                    }
+                    throw new Error(`서버 응답이 실패했습니다. 상태 코드: ${response.status}`);
+                }
+                return response.json();
             })
-            .then(response => response.ok ? response.json() : Promise.reject('서버 응답 실패'))
-            .then(data => {
-                alert(data.message || '일감이 성공적으로 등록되었습니다.');
-                location.reload();
+            [cite_start].then(data => { [cite: 47]
+                console.log('일감이 성공적으로 등록되었습니다.', data);
+                if(data.message) { // 성공 메시지가 있을 경우
+                    alert(data.message);
+                    closeCreateTaskModal();
+                    [cite_start]location.reload(); [cite: 48]
+                } else { // 오류 메시지가 있을 경우
+                    [cite_start]alert(data.error || '알 수 없는 오류가 발생했습니다.'); [cite: 49]
+                }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('일감 등록 중 오류가 발생했습니다.');
-            });
+                console.error('일감 등록 중 오류 발생:', error);
+                alert(`일감 등록 중 오류가 발생했습니다: ${error.message}`);
+                closeCreateTaskModal();
+            [cite_start]}); [cite: 50]
         }
-    </script>
-</body>
-</html>
+     </script>
+ </body>
+ </html>

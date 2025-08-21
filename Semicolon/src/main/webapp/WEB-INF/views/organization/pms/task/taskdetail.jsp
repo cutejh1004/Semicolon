@@ -149,30 +149,27 @@
 	<script src="${pageContext.request.contextPath}/resources/js/common.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
-            // ▼▼▼▼▼ 추가된 부분 ▼▼▼▼▼
-            // 사이드바 활성화
-            const currentPath = window.location.pathname;
-            const sidebarLinks = document.querySelectorAll('.sidebar-menu li a');
+            var currentPath = window.location.pathname;
+            var sidebarLinks = document.querySelectorAll('.sidebar-menu li a');
 
             sidebarLinks.forEach(function(link) {
-                const linkPath = link.getAttribute('href');
+                var linkPath = link.getAttribute('href');
                 if (linkPath && currentPath.includes('/main/task')) {
-                    if (linkPath.includes('task')) {
+                    if (linkPath.includes('TASK')) {
                         link.parentElement.classList.add('active');
                     }
                 }
             });
-            // ▲▲▲▲▲ 추가된 부분 ▲▲▲▲▲
 
 			// 댓글 추가 기능
 			const addReplyBtn = document.getElementById('addReplyBtn');
 			if(addReplyBtn) {
 				addReplyBtn.addEventListener('click', function() {
-					const replyContent = document.getElementById('replyContentInput').value.trim();
+					const replyContent = replyContentInput.value.trim();
 					const taskId = "${task.taskId}";
 					const userId = "loggedInUser"; // TODO: 실제 로그인된 사용자 ID로 변경
 
-					if (!replyContent) {
+					if (!replyContent.length === 0) {
 						alert("댓글 내용을 입력해주세요.");
 						return;
 					}
@@ -180,7 +177,9 @@
 					const newReplyData = {
 						bno: taskId,
 						userId: userId,
-						replyContent: replyContent
+						replyContent: replyContent,
+						engId: "",
+						groupId: ""
 					};
 
 					fetch('${pageContext.request.contextPath}/main/reply', {
@@ -192,6 +191,7 @@
 					.then(data => {
 						if (data.message) {
 							alert(data.message);
+							replyContentInput.value = '';
 							window.location.reload();
 						} else {
 							alert(data.error || "댓글 추가 중 오류 발생");
@@ -208,15 +208,18 @@
 		// 댓글 삭제 함수
 		function deleteReply(replyNumber) {
 			if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
-                // ▼▼▼▼▼ 수정된 부분 ▼▼▼▼▼
 				fetch('${pageContext.request.contextPath}/main/task/reply/' + replyNumber, { // API URL 변경
-                // ▲▲▲▲▲ 수정된 부분 ▲▲▲▲▲
 					method: 'DELETE'
 				})
-				.then(response => response.ok ? response.json() : Promise.reject('댓글 삭제 실패'))
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('댓글 삭제 실패');
+					}
+					return response.json();
+				})
 				.then(data => {
 					alert(data.message);
-					window.location.reload();
+					window.location.reload(); // 댓글 삭제 후 페이지 새로고침
 				})
 				.catch(error => {
 					console.error('Error:', error);
@@ -229,52 +232,67 @@
 		function openEditTaskModal() {
 			document.getElementById('editTaskModal').style.display = 'block';
 			document.getElementById('modalOverlayEdit').style.display = 'block';
+			document.body.classList.add('modal-active');
 		}
 
 		function closeEditTaskModal() {
 			document.getElementById('editTaskModal').style.display = 'none';
 			document.getElementById('modalOverlayEdit').style.display = 'none';
+			document.body.classList.remove('modal-active');
 		}
 
 		document.getElementById('modalOverlayEdit').addEventListener('click', closeEditTaskModal);
 
 		// 일감 수정 제출
-		function submitEditTask() {
-			const updatedData = {
-				taskId: document.getElementById('editTaskId').value,
-				taskTitle: document.getElementById('editTaskTitle').value,
-                taskManagerId: document.getElementById('editTaskManagerId').value,
-				taskDescription: document.getElementById('editTaskDescription').value,
-                taskStartDate: document.getElementById('editTaskStartDate').value,
-                taskEndDate: document.getElementById('editTaskEndDate').value,
-				taskStatus: document.getElementById('editStatusSelect').value,
-				taskUrgency: document.getElementById('editUrgencySelect').value
-			};
-			fetch('${pageContext.request.contextPath}/main/task', {
-				method: 'PUT',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(updatedData)
-			})
-			.then(response => response.json())
-			.then(data => {
-				if (data.message) {
-					alert(data.message);
-					closeEditTaskModal();
-					window.location.reload();
-				} else {
-					alert(data.error || "일감 수정 중 오류가 발생했습니다.");
-				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				alert("서버 통신 중 오류가 발생했습니다.");
-			});
-		}
+		const taskId = document.getElementById('editTaskId').value;
+	    const taskTitle = document.getElementById('editTaskTitle').value;
+	    const taskManagerId = document.getElementById('editTaskManagerId').value;
+	    const taskDescription = document.getElementById('editTaskDescription').value;
+	    const taskStartDate = document.getElementById('editTaskStartDate').value;
+	    const taskEndDate = document.getElementById('editTaskEndDate').value;
+	    const taskStatus = document.getElementById('editStatusSelect').value;
+	    const taskUrgency = document.getElementById('editUrgencySelect').value;
+	
+	    const updatedData = {
+	        taskId: taskId,
+	        taskTitle: taskTitle,
+	        taskManagerId: taskManagerId, // 'dtaskManagerId' -> 'taskManagerId' 오타 수정
+	        taskDescription: taskDescription,
+	        taskStartDate: taskStartDate,
+	        taskEndDate: taskEndDate,
+	        taskStatus: taskStatus,
+	        taskUrgency: taskUrgency
+	    };
+	    // ▲▲▲▲▲ 수정된 부분 ▲▲▲▲▲
+	
+	    fetch('${pageContext.request.contextPath}/main/task/update', { // Controller의 URL과 일치시킴
+	        method: 'PUT',
+	        headers: { 'Content-Type': 'application/json' },
+	        body: JSON.stringify(updatedData)
+	    [cite_start]}) [cite: 64]
+	    .then(response => response.json())
+	    .then(data => {
+	        if (data.message) {
+	            alert(data.message);
+	            closeEditTaskModal();
+	            window.location.reload();
+	        } else {
+	            alert(data.error || "일감 수정 중 오류가 발생했습니다.");
+	        }
+	    })
+	    .catch(error => {
+	        console.error('Error:', error);
+	        alert("서버 통신 중 오류가 발생했습니다.");
+	    });
+	}
 
 		// 일감 삭제 확인
 		function confirmTaskDeletion() {
-			if (confirm("해당 일감을 삭제하시겠습니까?")) {
+			    var isConfirmed = confirm("해당 일감을 삭제하시겠습니까?");
+			
+			if (isConfirmed) {
 				const taskId = "${task.taskId}";
+				
 				fetch('${pageContext.request.contextPath}/main/task/' + taskId, {
 					method: 'DELETE'
 				})
@@ -291,6 +309,8 @@
 					console.error('Error:', error);
 					alert("서버 통신 중 오류가 발생했습니다.");
 				});
+			} else {
+				alert("일감 삭제가 취소되었습니다.");
 			}
 		}
 	</script>

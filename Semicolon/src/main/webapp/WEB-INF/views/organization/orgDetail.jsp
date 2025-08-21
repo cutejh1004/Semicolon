@@ -23,16 +23,17 @@
 		<div class="main-content">
 			<div class="page-title-container">
 				<h2>조직 상세페이지</h2>
-				<div class="page-buttons">
-					<button type="button" class="edit-btn"
-						onclick="openModal('editOrgModal')">
-						<i class="fas fa-edit"></i> 조직 편집
-					</button>
-					<button type="button" class="delete-btn" onclick="deleteOrg()">
-						<i class="fas fa-trash"></i> 조직 삭제
-					</button>
-				</div>
-			</div>
+				<c:if test="${loginUser.user_id == org.orManagerId}">
+                <div class="page-buttons">
+                    <button type="button" class="edit-btn" onclick="openModal('editOrgModal')">
+                        <i class="fas fa-edit"></i> 조직 편집
+                    </button>
+                    <button type="button" class="delete-btn" onclick="deleteOrg()">
+                        <i class="fas fa-trash"></i> 조직 삭제
+                    </button>
+                </div>
+            </c:if>
+        </div>
 
 			<div class="org-detail-form-container">
 				<div class="form-grid-container">
@@ -102,6 +103,7 @@
 	<%@ include file="/WEB-INF/views/module/footer.jsp"%>
 
 	<script>
+    const contextPath = "${pageContext.request.contextPath}";
     const orgId = '${org.orId}';
 
     function openModal(modalId) {
@@ -125,20 +127,18 @@
             orLinkAddress: document.getElementById('modalOrLinkAddress').value
         };
 
-        // URL 경로에 /project를 직접 추가합니다.
-        fetch('/project/org/update', {
+        fetch(contextPath + '/org/update', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orgData),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error('서버 응답 오류: ' + response.status);
+            return response.json();
+        })
         .then(data => {
             alert(data.message);
-            if (data.status === 'success') {
-                window.location.reload();
-            }
+            if (data.status === 'success') window.location.reload();
         })
         .catch(error => {
             console.error('Error:', error);
@@ -147,21 +147,24 @@
     }
 
     function deleteOrg() {
-        if (confirm('정말로 이 조직을 삭제하시겠습니까? 관련된 모든 데이터가 삭제될 수 있습니다.')) {
-            // URL 경로에 /project를 직접 추가합니다.
-            fetch('/project/org/delete', {
+        if (confirm('정말로 이 조직을 삭제하시겠습니까?')) {
+            fetch(contextPath + '/org/delete', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ orId: orgId }),
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답 오류: ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
                 alert(data.message);
                 if (data.status === 'success') {
-                    // 여기도 경로를 직접 지정해줍니다.
-                    window.location.href = '/project/org/main'; 
+                    window.location.href = contextPath + '/org/main';
                 }
             })
             .catch(error => {

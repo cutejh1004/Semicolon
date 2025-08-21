@@ -10,7 +10,8 @@
     padding: 20px;
     background-color: #fafafa;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #e0e0e0;   
+    
 }
 
 /* 새 일정 버튼 컨테이너 */
@@ -145,7 +146,7 @@
 .fc-toolbar-title {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #333;
+    color: #333 ;
 }
 
 .fc-daygrid-event {
@@ -184,7 +185,7 @@
     /* 일정이 날짜를 가리지 않도록 z-index 설정 */
     z-index: 1; 
 }
-
+color: #333333!important;
 .btn.btn-primary {
     background-color: #6A3CD7; /* 보라색 배경 */
     color: #ffffff;
@@ -206,4 +207,7 @@
 
 .btn.btn-primary:hover {
     background-color: #552cb0; /* 호버 시 색상 변경 */
+}
+.fc-scrollgrid a {
+    color: #333333 !important;
 }

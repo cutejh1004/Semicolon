@@ -65,7 +65,7 @@
 	<bean id="taskService"
 		class="com.Semicolon.pms.service.TaskServiceImpl"
 		c:taskDAO-ref="taskDAO" c:taskReplyDAO-ref="taskReplyDAO" />
-		
+    	
 	<bean id="issueDAO" class="com.Semicolon.pms.dao.IssueDAOImpl"
 		c:sqlSession-ref="sqlSession" />
 	<bean id="issueService"
@@ -116,6 +116,6 @@
 
 	<bean id="issueReplyService"
 		class="com.Semicolon.pms.service.IssueReplyServiceImpl">
-		<property name="issueReplyDAO" ref="issueReplyDAO" />
+		<constructor-arg ref="issueReplyDAO" />
 	</bean>
 </beans>

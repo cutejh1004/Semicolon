@@ -17,6 +17,32 @@
 		<result property="taskModifyDate" column="TASK_MODIFY_DATE" />
 	</resultMap>
 
+	<select id="getTaskListByProjectId" parameterType="com.Semicolon.command.PageMaker" resultMap="taskMap">
+		SELECT *
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY TASK_REG_DATE DESC) AS rnum,
+				T.*
+			FROM
+				TASK T
+			WHERE
+				T.PROJECT_ID = #{projectId, jdbcType=VARCHAR}
+				<if test="searchQuery != null and searchQuery != ''">
+					AND T.TASK_TITLE LIKE '%' || #{searchQuery, jdbcType=VARCHAR} || '%'
+				</if>
+		)
+		WHERE rnum BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="getTotalCountByProjectId" parameterType="com.Semicolon.command.PageMaker" resultType="int">
+		SELECT COUNT(*)
+		FROM TASK
+		WHERE PROJECT_ID = #{projectId, jdbcType=VARCHAR}
+		<if test="searchQuery != null and searchQuery != ''">
+			AND TASK_TITLE LIKE '%' || #{searchQuery, jdbcType=VARCHAR} || '%'
+		</if>
+	</select>
+
 	<select id="getTaskList" resultMap="taskMap">
 		SELECT * FROM TASK
 		ORDER BY TASK_REG_DATE DESC
@@ -48,13 +74,17 @@
 		)
 		VALUES
 		(
-		'TASK-' || LPAD(TASK_SEQ.NEXTVAL, 3, '0'), #{projectId}, #{taskTitle},
+		'TASK-' || LPAD(TASK_SEQ.NEXTVAL, 3, '0'),
+		#{projectId},
+		#{taskTitle},
 		#{taskManagerId},
-		#{taskStatus}, #{taskStartDate},
+		#{taskStatus},
+		#{taskStartDate},
 		#{taskEndDate},
 		#{taskDescription},
 		SYSDATE,
-		#{taskUrgency}, SYSDATE
+		#{taskUrgency},
+		SYSDATE
 		)
 	</insert>
 

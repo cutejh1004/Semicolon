@@ -13,7 +13,7 @@ public class IssueReplyDAOImpl implements IssueReplyDAO {
         this.sqlSession = sqlSession;
     }
 
-    private static final String NAMESPACE = "com.Semicolon.pms.mapper.IssueReplyMapper";
+    private static final String NAMESPACE = "com.Semicolon.pms.mappers.IssueReply-Mapper";
 
     @Override
     public List<IssueReplyDTO> selectReplyList(String issueId) throws SQLException {
